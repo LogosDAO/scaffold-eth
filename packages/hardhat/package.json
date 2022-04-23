@@ -3,15 +3,20 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "devDependencies": {
-    "eslint": "^7.5.0",
-    "eslint-config-airbnb": "^18.2.0",
-    "eslint-config-prettier": "^6.11.0",
-    "eslint-plugin-babel": "^5.3.1",
-    "eslint-plugin-prettier": "^3.4.0"
-  },
   "dependencies": {
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers",
+    "@typechain/ethers-v5": "^8.0.5",
+    "@typechain/hardhat": "^3.0.0",
+    "ts-generator": "^0.1.1",
+    "ts-node": "^10.4.0",
+    "tslint": "^6.1.3",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.3.0",
+    "typechain": "^6.0.5",
+    "typescript": "^4.5.3",
+    "@types/chai": "^4.3.0",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^16.11.12",
     "@nomiclabs/hardhat-waffle": "^2.0.0",
     "@openzeppelin/contracts": "^4.4.2",
     "@tenderly/hardhat-tenderly": "^1.0.10",
@@ -41,6 +46,10 @@
     "send": "hardhat send",
     "generate": "hardhat generate",
     "account": "hardhat account",
-    "verify": "hardhat verify"
+    "verify": "hardhat verify",
+    "lint:fix": "prettier --write 'scripts/**/*.{js,ts}' 'test/**/*.{js,ts}' 'tasks/**/*.{js,ts}' && tslint --fix --config tslint.json --project tsconfig.json && solhint contracts/**/*.sol",
+    "lint": "tslint --config tslint.json --project tsconfig.json && solhint contracts/**/*.sol",
+    "format": "prettier --check \"**/*.{ts,js,sol}\"",
+    "format:fix": "prettier --write \"**/*.{ts,js,sol}\""
   }
 }
