@@ -164,13 +164,13 @@ contract Membership is ERC721ABurnable, Ownable, Initializable {
 
 /// @title Membership NFT Summoner
 /// @notice Clone factory for new memberships
-contract MembershipSummoner is CloneFactory, Ownable {
+contract MembershipSummoner is CloneFactory{
     address public template; /*Template contract to clone*/
 
     constructor(address _template) public {
         template = _template;
     }
-
+    
     event SummonComplete(
         address indexed newContract,
         string name,
@@ -193,7 +193,7 @@ contract MembershipSummoner is CloneFactory, Ownable {
         uint256 _limitPerPurchase,
         uint256 _maxSupply,
         address payable _sink
-    ) external onlyOwner returns (address) {
+    ) external returns (address) {
         Membership membership = Membership(createClone(template)); /*Create a new clone of the template*/
 
         /*Set up the external interfaces*/
@@ -210,7 +210,7 @@ contract MembershipSummoner is CloneFactory, Ownable {
         );
 
         emit SummonComplete(address(membership), name_, symbol_, msg.sender);
-
+        
         return address(membership);
     }
 }

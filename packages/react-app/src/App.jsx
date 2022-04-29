@@ -71,6 +71,8 @@ const providers = [
 ];
 
 function App(props) {
+  
+  const contractAddr = '0xCafac3dD18aC6c6e92c921884f9E4176737C052c'
   // specify all the chains your app is available on. Eg: ['localhost', 'mainnet', ...otherNetworks ]
   // reference './constants.js' for other networks
   const networkOptions = [initialNetwork.name, "mainnet", "rinkeby"];
@@ -143,13 +145,16 @@ function App(props) {
 
   // const contractConfig = useContractConfig();
 
-  const contractConfig = { deployedContracts: deployedContracts || {}, externalContracts: externalContracts || {} };
+  const contractConfig = { deployedContracts: deployedContracts || {}, externalContracts: externalContracts || {}};
 
   // Load in your local 📝 contract and read a value from it:
   const readContracts = useContractLoader(localProvider, contractConfig);
 
   // If you want to make 🔐 write transactions to your contracts, use the userSigner:
   const writeContracts = useContractLoader(userSigner, contractConfig, localChainId);
+
+  console.log({contractConfig})
+console.log({writeContracts})
 
   // EXTERNAL CONTRACT EXAMPLE:
   //
@@ -290,7 +295,7 @@ function App(props) {
             */}
 
           <Contract
-            name="YourContract"
+            name="Membership"
             price={price}
             signer={userSigner}
             provider={localProvider}
