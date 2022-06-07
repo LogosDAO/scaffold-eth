@@ -12,55 +12,26 @@ const localChainId = "31337";
 //     }, ms)
 //   );
 
-const getNewAddress = async (tx) => {
-    const receipt = await ethers.provider.getTransactionReceipt(tx.hash)
-    // console.log({logs: receipt.logs})
-    const summonAbi = ['event SummonComplete(address indexed newContract,string name, string symbol, address summoner)']
-    const iface = new ethers.utils.Interface(summonAbi)
-    const log = iface.parseLog(receipt.logs[receipt.logs.length - 1])
-    const { newContract } = log.args
-    return newContract
-}
-const sinkAddress = '0xd8b6741ea0848676c502df08ab77a3cc257155d6'
-
 module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
-  const chainId = await getChainId();
 
-  await deploy("Membership", {
-    // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
+  const tx = await deploy("Membership", {
     from: deployer,
-    // args: [ "Hello", ethers.utils.parseEther("1.5") ],
+    args: [
+      "VCA Membership Rinkeby",
+      "rVCA",
+      "https://vca-dev-nft.s3.amazonaws.com/contract.json",
+      "https://vca-sandbox.s3.amazonaws.com/",
+      1,
+      2,
+      50,
+    ],
     log: true,
     waitConfirmations: 5,
   });
 
-  // Getting a previously deployed contract
-  const YourContract = await ethers.getContract("Membership", deployer);
-  
-  await deploy("MembershipSummoner", {
-    from: deployer,
-    args: [YourContract.address],
-    log: true,
-    waitConfirmations: 5
-  })
-
-  const Summoner = await ethers.getContract("MembershipSummoner", deployer);
-  
-  const tx = await Summoner.summonMembership(
-    "VCA Membership Rinkeby",
-    "rVCA",
-    "https://vca-dev-nft.s3.amazonaws.com/contract.json",
-    "https://vca-dev-nft.s3.amazonaws.com/tokens/",
-    ethers.utils.parseEther("0.1"),
-    1,
-    150,
-    sinkAddress
-  )
-  
-  const address = await getNewAddress(tx)
-  console.log({address})
+  console.log({ tx });
   /*  await YourContract.setPurpose("Hello");
   
     To take ownership of yourContract using the ownable library uncomment next line and add the 

@@ -14,11 +14,12 @@ import 'hardhat-gas-reporter'
 import '@nomiclabs/hardhat-ethers'
 import '@nomiclabs/hardhat-etherscan'
 import { task } from 'hardhat/config'
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/dist/src/signers'
 
 const { isAddress, getAddress, formatUnits, parseUnits } = utils
 
 import './tasks/generate-metadata'
+import './tasks/generate-allowlist'
+import './tasks/set-claim-state'
 
 /*
       📡 This is where you configure your deploy configuration for 🏗 scaffold-eth
@@ -265,7 +266,7 @@ module.exports = {
     solidity: {
         compilers: [
             {
-                version: '0.8.10',
+                version: '0.8.13',
                 settings: {
                     optimizer: {
                         enabled: true,
@@ -295,6 +296,7 @@ module.exports = {
     etherscan: {
         apiKey: {
             mainnet: 'DNXJA8RX2Q3VZ4URQIWP7Z68CJXQZSC6AW',
+            rinkeby: 'DNXJA8RX2Q3VZ4URQIWP7Z68CJXQZSC6AW',
             // add other network's API key here
         },
     },
