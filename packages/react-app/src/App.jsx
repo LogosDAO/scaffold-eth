@@ -71,7 +71,6 @@ const providers = [
 ];
 
 function App(props) {
-  const contractAddr = "0xCafac3dD18aC6c6e92c921884f9E4176737C052c";
   // specify all the chains your app is available on. Eg: ['localhost', 'mainnet', ...otherNetworks ]
   // reference './constants.js' for other networks
   const networkOptions = [initialNetwork.name, "mainnet", "rinkeby"];
@@ -171,7 +170,6 @@ function App(props) {
   ]);
 
   // keep track of a variable from the contract in the local React state:
-  const purpose = useContractReader(readContracts, "YourContract", "purpose");
 
   const publicEnabled = useContractReader(readContracts, "Membership", "publicEnabled");
   const allowlistEnabled = useContractReader(readContracts, "Membership", "allowlistEnabled");

@@ -1,8 +1,7 @@
-import { Button, Card, DatePicker, Divider, Input, Progress, Slider, Spin, Switch } from "antd";
-import React, { useState } from "react";
-import { utils } from "ethers";
 import { SyncOutlined } from "@ant-design/icons";
-
+import { Button, Card, DatePicker, Divider, Input, Progress, Slider, Spin, Switch } from "antd";
+import { utils } from "ethers";
+import React from "react";
 import { Address, Balance, Events } from "../components";
 
 export default function ExampleUI({
@@ -16,8 +15,6 @@ export default function ExampleUI({
   readContracts,
   writeContracts,
 }) {
-  const [newPurpose, setNewPurpose] = useState("loading...");
-
   return (
     <div>
       {/*

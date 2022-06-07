@@ -1,9 +1,5 @@
-import { useContractReader } from "eth-hooks";
-import { ethers } from "ethers";
-import React from "react";
-import { Link } from "react-router-dom";
 import { Button } from "antd";
-import { utils } from "ethers";
+import React from "react";
 
 const auths = require("../auths.json");
 
