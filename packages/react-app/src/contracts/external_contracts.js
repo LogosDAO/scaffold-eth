@@ -1481,6 +1481,14 @@ module.exports = {
       },
     },
   },
+  4: {
+    contracts: {
+      Membership: {
+        address: "0xc4ee4155b8d8829cc69d3102a018e6f725213791",
+        abi: membershipAbi,
+      },
+    },
+  },
   31337: {
     contracts: {
       Membership: {

@@ -21,7 +21,7 @@ const getNewAddress = async (tx) => {
     const { newContract } = log.args
     return newContract
 }
-const sinkAddress = '0x000000000000000000000000000000000000dEaD'
+const sinkAddress = '0xd8b6741ea0848676c502df08ab77a3cc257155d6'
 
 module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   const { deploy } = deployments;
@@ -49,10 +49,10 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   const Summoner = await ethers.getContract("MembershipSummoner", deployer);
   
   const tx = await Summoner.summonMembership(
-    "Name",
-    "SYM",
-    "contract.json",
-    "uri/",
+    "VCA Membership Rinkeby",
+    "rVCA",
+    "https://vca-dev-nft.s3.amazonaws.com/contract.json",
+    "https://vca-dev-nft.s3.amazonaws.com/tokens/",
     ethers.utils.parseEther("0.1"),
     1,
     150,

@@ -18,6 +18,8 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/dist/src/signers'
 
 const { isAddress, getAddress, formatUnits, parseUnits } = utils
 
+import './tasks/generate-metadata'
+
 /*
       📡 This is where you configure your deploy configuration for 🏗 scaffold-eth
 

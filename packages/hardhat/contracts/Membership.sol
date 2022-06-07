@@ -33,6 +33,10 @@ error InsufficientValue();
 error RoundLimitExceeded();
 error FailedToSendETH();
 
+// TODO whitelist
+// TODO reserve mint
+// TODO track & limit mints per wallet
+
 /// @title Membership NFT
 /// @notice Membership contract with public sale
 contract Membership is ERC721ABurnable, Ownable, Initializable {
