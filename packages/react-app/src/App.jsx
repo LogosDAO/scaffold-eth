@@ -173,6 +173,9 @@ function App(props) {
   // keep track of a variable from the contract in the local React state:
   const purpose = useContractReader(readContracts, "YourContract", "purpose");
 
+  const publicEnabled = useContractReader(readContracts, "Membership", "publicEnabled");
+  const allowlistEnabled = useContractReader(readContracts, "Membership", "allowlistEnabled");
+
   /*
   const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
   console.log("🏷 Resolved austingriffith.eth as:",addressFromENS)
@@ -278,6 +281,8 @@ function App(props) {
             readContracts={readContracts}
             tx={tx}
             writeContracts={writeContracts}
+            publicEnabled={publicEnabled}
+            allowlistEnabled={allowlistEnabled}
           />
         </Route>
         <Route exact path="/debug">

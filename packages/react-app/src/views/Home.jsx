@@ -13,18 +13,18 @@ const auths = require("../auths.json");
  * @param {*} readContracts contracts from current chain already pre-loaded using ethers contract module. More here https://docs.ethers.io/v5/api/contract/contract/
  * @returns react component
  **/
-function Home({ address, yourLocalBalance, readContracts, tx, writeContracts }) {
+function Home({ address, yourLocalBalance, readContracts, tx, writeContracts, publicEnabled, allowlistEnabled }) {
   // you can also use hooks locally in your component of choice
   // in this case, let's keep track of 'purpose' variable from our contract
 
-  console.log({ auths });
+  console.log({ publicEnabled, allowlistEnabled });
 
   return (
     <div>
       <div style={{ margin: 32 }}>
         <Button
           style={{ marginTop: 8 }}
-          disabled={!address}
+          disabled={!address || !publicEnabled}
           onClick={async () => {
             /* look how you call setPurpose on your contract: */
             /* notice how you pass a call back for tx updates too */
@@ -51,7 +51,7 @@ function Home({ address, yourLocalBalance, readContracts, tx, writeContracts }) 
         </Button>
         <Button
           style={{ marginTop: 8 }}
-          disabled={auths[address] === undefined}
+          disabled={auths[address] === undefined || !allowlistEnabled}
           onClick={async () => {
             /* look how you call setPurpose on your contract: */
             /* notice how you pass a call back for tx updates too */
