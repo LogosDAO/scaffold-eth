@@ -38,7 +38,7 @@ export default function ExampleUI({
             onClick={async () => {
               /* look how you call setPurpose on your contract: */
               /* notice how you pass a call back for tx updates too */
-              const result = tx(writeContracts.Membership.purchase(1, {value: utils.parseEther("0.1")}), update => {
+              const result = tx(writeContracts.Membership.purchase(1, { value: utils.parseEther("0.1") }), update => {
                 console.log("📡 Transaction Update:", update);
                 if (update && (update.status === "confirmed" || update.status === 1)) {
                   console.log(" 🍾 Transaction " + update.hash + " finished!");
