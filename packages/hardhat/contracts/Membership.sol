@@ -3,7 +3,7 @@ pragma solidity 0.8.13;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "erc721a/contracts/extensions/ERC721ABurnable.sol";
+import "erc721a/contracts/ERC721A.sol";
 
 import "./EIP712Allowlisting.sol";
 
@@ -14,7 +14,7 @@ error PublicDisabled();
 
 /// @title Membership NFT
 /// @notice Membership contract with public sale
-contract Membership is ERC721ABurnable, Ownable, EIP712Allowlisting {
+contract Membership is ERC721A, Ownable, EIP712Allowlisting {
     using Strings for uint256; /*String library allows for token URI concatenation*/
 
     string public contractURI; /*contractURI contract metadata json*/
@@ -24,8 +24,8 @@ contract Membership is ERC721ABurnable, Ownable, EIP712Allowlisting {
     uint256 public limitPerPurchase; /*Max amount of tokens someone can buy in one transaction*/
     uint256 public limitPerAddress; /*Max amount of tokens an address can claim*/
 
-    bool public allowlistEnabled;
-    bool public publicEnabled;
+    bool public allowlistEnabled; /*Minting enabled for wallets on allowlist*/
+    bool public publicEnabled; /*Mintin enabled for all wallets*/
 
     mapping(address => uint256) public claimed;
 
@@ -84,6 +84,8 @@ contract Membership is ERC721ABurnable, Ownable, EIP712Allowlisting {
         if ((totalSupply() + _qty) > maxSupply) revert MaxSupplyExceeded(); /*Check against max supply*/
         if (_qty > limitPerPurchase) revert ClaimLimitExceeded();
         if (claimed[msg.sender] >= limitPerAddress) revert ClaimLimitExceeded();
+
+        claimed[msg.sender] += _qty; /*Track how many an address has claimed*/
 
         _safeMint(_dst, _qty); /*Send token to new recipient*/
     }

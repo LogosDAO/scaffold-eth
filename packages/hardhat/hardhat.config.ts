@@ -4,9 +4,11 @@ import { ethers, utils } from 'ethers'
 import fs from 'fs'
 import chalk from 'chalk'
 
+import "@nomiclabs/hardhat-ethers";
 import '@nomiclabs/hardhat-waffle'
 import '@tenderly/hardhat-tenderly'
 import '@typechain/hardhat'
+import "solidity-coverage";
 
 import 'hardhat-deploy'
 import 'hardhat-gas-reporter'
