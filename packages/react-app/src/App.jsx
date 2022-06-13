@@ -9,7 +9,6 @@ import {
 } from "eth-hooks";
 import { useExchangeEthPrice } from "eth-hooks/dapps/dex";
 import React, { useCallback, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import "./App.css";
 import "./bootstrap.min.css";
 import heroImage from "./img/header-img-residency-test.png";
@@ -72,7 +71,6 @@ function App(props) {
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
   const [selectedNetwork, setSelectedNetwork] = useState(networkOptions[0]);
-  const location = useLocation();
 
   const targetNetwork = NETWORKS[selectedNetwork];
 
@@ -243,8 +241,6 @@ function App(props) {
     }
   }, [loadWeb3Modal]);
 
-  const faucetAvailable = localProvider && localProvider.connection && targetNetwork.name.indexOf("local") !== -1;
-
   window.localStorage.setItem("theme", "dark");
 
   return (
@@ -267,12 +263,12 @@ function App(props) {
           <div className="mint-info">
             <div className="mint-supply">
               <h2>Mint Supply</h2>
-              <p>{mintSupply ? mintSupply.toString : '?'}</p>
+              <p>{mintSupply ? mintSupply.toString : "?"}</p>
             </div>
 
             <div className="mint-supply-remaining">
               <h2>Remaining Supply</h2>
-              <p>{mintSupply && minted ? mintSupply.sub(minted).toString() : '?'}</p>
+              <p>{mintSupply && minted ? mintSupply.sub(minted).toString() : "?"}</p>
             </div>
           </div>
           <p>Mint your membership pass now</p>
