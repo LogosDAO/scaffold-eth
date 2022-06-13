@@ -1,4 +1,3 @@
-import { Button, Col, Menu, Row } from "antd";
 import "antd/dist/antd.css";
 import {
   useBalance,
@@ -10,27 +9,22 @@ import {
 } from "eth-hooks";
 import { useExchangeEthPrice } from "eth-hooks/dapps/dex";
 import React, { useCallback, useEffect, useState } from "react";
-import { Link, Route, Switch, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import "./App.css";
-import {
-  Account,
-  Contract,
-  Faucet,
-  FaucetHint,
-  GasGauge,
-  Header,
-  NetworkDisplay,
-  NetworkSwitch,
-  Ramp,
-  ThemeSwitch,
-} from "./components";
+import "./bootstrap.min.css";
+import heroImage from "./img/header-img-residency-test.png";
+import logoVCA from "./img/logo.svg";
+import Accordion from "react-bootstrap/Accordion";
+import Container from "react-bootstrap/Container";
+import { Account, FaucetHint, NetworkDisplay, NetworkSwitch } from "./components";
 import { ALCHEMY_KEY, NETWORKS } from "./constants";
 import externalContracts from "./contracts/external_contracts";
 // contracts
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
 import { useStaticJsonRPC } from "./hooks";
-import { Home } from "./views";
+
+const auths = require("./auths.json");
 
 const { ethers } = require("ethers");
 /*
@@ -173,6 +167,8 @@ function App(props) {
 
   const publicEnabled = useContractReader(readContracts, "Membership", "publicEnabled");
   const allowlistEnabled = useContractReader(readContracts, "Membership", "allowlistEnabled");
+  const mintSupply = useContractReader(readContracts, "Membership", "maxSupply");
+  const minted = useContractReader(readContracts, "Membership", "totalSupply");
 
   /*
   const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
@@ -249,10 +245,11 @@ function App(props) {
 
   const faucetAvailable = localProvider && localProvider.connection && targetNetwork.name.indexOf("local") !== -1;
 
+  window.localStorage.setItem("theme", "dark");
+
   return (
     <div className="App">
       {/* ✏️ Edit the header and change the title to your project name */}
-      <Header />
       <NetworkDisplay
         NETWORKCHECK={NETWORKCHECK}
         localChainId={localChainId}
@@ -261,48 +258,130 @@ function App(props) {
         logoutOfWeb3Modal={logoutOfWeb3Modal}
         USE_NETWORK_SELECTOR={USE_NETWORK_SELECTOR}
       />
-      <Menu style={{ textAlign: "center", marginTop: 40 }} selectedKeys={[location.pathname]} mode="horizontal">
-        <Menu.Item key="/">
-          <Link to="/">App Home</Link>
-        </Menu.Item>
-        <Menu.Item key="/debug">
-          <Link to="/debug">Debug Contracts</Link>
-        </Menu.Item>
-      </Menu>
 
-      <Switch>
-        <Route exact path="/">
-          {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
-          <Home
-            address={address}
-            yourLocalBalance={yourLocalBalance}
-            readContracts={readContracts}
-            tx={tx}
-            writeContracts={writeContracts}
-            publicEnabled={publicEnabled}
-            allowlistEnabled={allowlistEnabled}
-          />
-        </Route>
-        <Route exact path="/debug">
-          {/*
-                🎛 this scaffolding is full of commonly used components
-                this <Contract/> component will automatically parse your ABI
-                and give you a form to interact with it locally
-            */}
+      <div className="viewport-header">
+        <img className="bg-vid" src={heroImage} />
 
-          <Contract
-            name="Membership"
-            price={price}
-            signer={userSigner}
-            provider={localProvider}
-            address={address}
-            blockExplorer={blockExplorer}
-            contractConfig={contractConfig}
-          />
-        </Route>
-      </Switch>
+        <div className="mint-window">
+          <h1>VCA MEMBERSHIP</h1>
+          <div className="mint-info">
+            <div className="mint-supply">
+              <h2>Mint Supply</h2>
+              <p>{mintSupply ? mintSupply.toString : '?'}</p>
+            </div>
 
-      <ThemeSwitch />
+            <div className="mint-supply-remaining">
+              <h2>Remaining Supply</h2>
+              <p>{mintSupply && minted ? mintSupply.sub(minted).toString() : '?'}</p>
+            </div>
+          </div>
+          <p>Mint your membership pass now</p>
+
+          <button
+            style={{ marginTop: 8 }}
+            disabled={!address || !publicEnabled}
+            onClick={async () => {
+              /* look how you call setPurpose on your contract: */
+              /* notice how you pass a call back for tx updates too */
+              const result = tx(writeContracts.Membership.mintPublic(1), update => {
+                console.log("📡 Transaction Update:", update);
+                if (update && (update.status === "confirmed" || update.status === 1)) {
+                  console.log(" 🍾 Transaction " + update.hash + " finished!");
+                  console.log(
+                    " ⛽️ " +
+                      update.gasUsed +
+                      "/" +
+                      (update.gasLimit || update.gas) +
+                      " @ " +
+                      parseFloat(update.gasPrice) / 1000000000 +
+                      " gwei",
+                  );
+                }
+              });
+              console.log("awaiting metamask/web3 confirm result...", result);
+              console.log(await result);
+            }}
+          >
+            Mint public!
+          </button>
+          <button
+            style={{ marginTop: 8 }}
+            disabled={auths[address] === undefined || !allowlistEnabled}
+            onClick={async () => {
+              /* look how you call setPurpose on your contract: */
+              /* notice how you pass a call back for tx updates too */
+              const result = tx(
+                writeContracts.Membership.mintAllowList(1, auths[address].nonce, auths[address].signature),
+                update => {
+                  console.log("📡 Transaction Update:", update);
+                  if (update && (update.status === "confirmed" || update.status === 1)) {
+                    console.log(" 🍾 Transaction " + update.hash + " finished!");
+                    console.log(
+                      " ⛽️ " +
+                        update.gasUsed +
+                        "/" +
+                        (update.gasLimit || update.gas) +
+                        " @ " +
+                        parseFloat(update.gasPrice) / 1000000000 +
+                        " gwei",
+                    );
+                  }
+                },
+              );
+              console.log("awaiting metamask/web3 confirm result...", result);
+              console.log(await result);
+            }}
+          >
+            Mint allow list!
+          </button>
+        </div>
+      </div>
+
+      <div className="desc-proj">
+        <h1>Membership F.A.Q</h1>
+
+        <Container fluid className="faq-container">
+          <Accordion>
+            <Accordion.Item eventKey="0">
+              <Accordion.Header>1. Am I eligible for the mint?</Accordion.Header>
+              <Accordion.Body>List the conditions to meet to be able to mint a vca membership token</Accordion.Body>
+            </Accordion.Item>
+            <Accordion.Item eventKey="1">
+              <Accordion.Header>2. What is the mint price ?</Accordion.Header>
+              <Accordion.Body>Lorem Lipsum</Accordion.Body>
+            </Accordion.Item>
+            <Accordion.Item eventKey="2">
+              <Accordion.Header>3. What are the benefits of holding a VCA membership pass ?</Accordion.Header>
+              <Accordion.Body>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+                ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+                deserunt mollit anim id est laborum.
+              </Accordion.Body>
+            </Accordion.Item>
+            <Accordion.Item eventKey="3">
+              <Accordion.Header>4. What are the conditions to get in the allow list ?</Accordion.Header>
+              <Accordion.Body>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+                ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+                deserunt mollit anim id est laborum.
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
+        </Container>
+      </div>
+
+      <div className="footer">
+        <p>2022 VCA Membership by VerticalCrypto Art. All Right Reserved.</p>
+        <div className="socials">
+          <p>OpenSea</p>
+          <p>Etherscan</p>
+          <p>Twitter</p>
+        </div>
+      </div>
 
       {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
       <div style={{ position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10 }}>
@@ -316,6 +395,7 @@ function App(props) {
               />
             </div>
           )}
+          <img className="logo-vca" src={logoVCA} />
           <Account
             useBurner={USE_BURNER_WALLET}
             address={address}
@@ -332,46 +412,6 @@ function App(props) {
         {yourLocalBalance.lte(ethers.BigNumber.from("0")) && (
           <FaucetHint localProvider={localProvider} targetNetwork={targetNetwork} address={address} />
         )}
-      </div>
-
-      {/* 🗺 Extra UI like gas price, eth price, faucet, and support: */}
-      <div style={{ position: "fixed", textAlign: "left", left: 0, bottom: 20, padding: 10 }}>
-        <Row align="middle" gutter={[4, 4]}>
-          <Col span={8}>
-            <Ramp price={price} address={address} networks={NETWORKS} />
-          </Col>
-
-          <Col span={8} style={{ textAlign: "center", opacity: 0.8 }}>
-            <GasGauge gasPrice={gasPrice} />
-          </Col>
-          <Col span={8} style={{ textAlign: "center", opacity: 1 }}>
-            <Button
-              onClick={() => {
-                window.open("https://t.me/joinchat/KByvmRe5wkR-8F_zz6AjpA");
-              }}
-              size="large"
-              shape="round"
-            >
-              <span style={{ marginRight: 8 }} role="img" aria-label="support">
-                💬
-              </span>
-              Support
-            </Button>
-          </Col>
-        </Row>
-
-        <Row align="middle" gutter={[4, 4]}>
-          <Col span={24}>
-            {
-              /*  if the local provider has a signer, let's show the faucet:  */
-              faucetAvailable ? (
-                <Faucet localProvider={localProvider} price={price} ensProvider={mainnetProvider} />
-              ) : (
-                ""
-              )
-            }
-          </Col>
-        </Row>
       </div>
     </div>
   );
