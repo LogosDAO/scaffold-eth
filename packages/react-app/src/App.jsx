@@ -256,7 +256,7 @@ function App(props) {
       />
 
       <div className="viewport-header">
-        <img className="bg-vid" src={heroImage} />
+        <img className="bg-vid" src={heroImage} alt="" />
 
         <div className="mint-window">
           <h1>VCA MEMBERSHIP</h1>
@@ -391,7 +391,7 @@ function App(props) {
               />
             </div>
           )}
-          <img className="logo-vca" src={logoVCA} />
+          <img className="logo-vca" src={logoVCA} alt="" />
           <Account
             useBurner={USE_BURNER_WALLET}
             address={address}
