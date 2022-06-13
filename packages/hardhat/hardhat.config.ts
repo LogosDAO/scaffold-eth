@@ -8,10 +8,11 @@ import "@nomiclabs/hardhat-ethers";
 import '@nomiclabs/hardhat-waffle'
 import '@tenderly/hardhat-tenderly'
 import '@typechain/hardhat'
-import "solidity-coverage";
 
 import 'hardhat-deploy'
 import 'hardhat-gas-reporter'
+
+import "solidity-coverage";
 
 import '@nomiclabs/hardhat-ethers'
 import '@nomiclabs/hardhat-etherscan'

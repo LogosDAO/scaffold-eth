@@ -12,7 +12,6 @@ export type { IERC165 } from "./IERC165";
 export type { EIP712Allowlisting } from "./EIP712Allowlisting";
 export type { Membership } from "./Membership";
 export type { ERC721A } from "./ERC721A";
-export type { ERC721ABurnable } from "./ERC721ABurnable";
 
 export { AccessControl__factory } from "./factories/AccessControl__factory";
 export { IAccessControl__factory } from "./factories/IAccessControl__factory";
@@ -25,4 +24,3 @@ export { IERC165__factory } from "./factories/IERC165__factory";
 export { EIP712Allowlisting__factory } from "./factories/EIP712Allowlisting__factory";
 export { Membership__factory } from "./factories/Membership__factory";
 export { ERC721A__factory } from "./factories/ERC721A__factory";
-export { ERC721ABurnable__factory } from "./factories/ERC721ABurnable__factory";
