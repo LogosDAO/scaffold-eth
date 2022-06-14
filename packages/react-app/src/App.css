@@ -348,7 +348,7 @@ button {
   border-top-left-radius: calc(0.25rem - 1px);
   border-top-right-radius: calc(0.25rem - 1px);
   color: #fff !important;;
-
+  margin: 1% 2% 1% 0 !important
 } 
 
 .accordion-item .accordion-button {
