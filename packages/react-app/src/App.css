@@ -54,6 +54,7 @@
   justify-content:space-between;
   align-items:center;
   width:15vw;
+  min-width:250px;
 }
 
 .socials p {
@@ -93,6 +94,10 @@
   font-family: 'Space Grotesk', sans-serif;
   letter-spacing:0.4px;
   cursor:pointer;
+}
+
+.nav-bar button:hover { 
+    color:#fff !important;
 }
 
 .viewport-header {
