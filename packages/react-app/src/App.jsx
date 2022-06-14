@@ -174,6 +174,8 @@ function App(props) {
   const mintSupply = useContractReader(readContracts, "Membership", "maxSupply");
   const minted = useContractReader(readContracts, "Membership", "totalSupply");
 
+  console.log({mintSupply, minted})
+
   /*
   const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
   console.log("🏷 Resolved austingriffith.eth as:",addressFromENS)
@@ -313,7 +315,7 @@ function App(props) {
           <div className="mint-info">
             <div className="mint-supply">
               <h2>Mint Supply</h2>
-              <p>{mintSupply ? mintSupply.toString : "?"}</p>
+              <p>{mintSupply ? mintSupply.toString() : "?"}</p>
             </div>
 
             <div className="mint-supply-remaining">
