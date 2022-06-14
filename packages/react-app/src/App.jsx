@@ -25,6 +25,7 @@ import { useStaticJsonRPC } from "./hooks";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import Modal from './components/Modal/Modal'
+import ModalEmail from './components/Modal/ModalEmail'
 
 const auths = require("./auths.json");
 
@@ -259,6 +260,10 @@ function App(props) {
     bool:false,
     })
 
+    const [modalOpenEmail, setModalOpenEmail] = useState ({
+      bool:false,
+      })
+
   // API for newsletter
   const baseURL = "https://api-vca-dev-00.azurewebsites.net/entries";
   const [postResult, setPostResult] = useState(null);
@@ -287,6 +292,8 @@ function App(props) {
       }
       const data = await res.json();
       console.log(data)
+      setModalOpenEmail({bool:true})
+
     } catch (err) {
       alert(err.message);
     }
@@ -426,13 +433,14 @@ function App(props) {
         <h3>Join our newsletter</h3>
 
         <input id="register-input"
-        type="text"
+        name="email"
+        type="email"
         required
         placeholder="your email@email.com"
         value={emailAddress}
         onChange={(e) => setEmailAddress(e.target.value)}
         />
-        <button onClick={postData}>Submit</button>
+        <button onClick={postData} disabled={!emailAddress}>Submit</button>
       </div>
 
       <div className="footer">
@@ -446,6 +454,7 @@ function App(props) {
 
       {/* modal */}
       {modalOpen.bool && <Modal setOpenModal={setModalOpen}/>}
+      {modalOpenEmail.bool && <ModalEmail setOpenModal={setModalOpenEmail} emailAddress={emailAddress}/>}
 
       {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
 

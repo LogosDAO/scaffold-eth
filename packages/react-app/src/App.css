@@ -296,7 +296,7 @@ button.testModal {
   /* border: 1px solid rgba(255,255,255,.1);*/
 }
 
-.mint-btns button:disabled {
+button:disabled {
   background:#838383;
   border: 1px #838383 solid;
   color:#131313;
