@@ -1,13 +1,17 @@
-import { expect } from 'chai'
 import { ethers } from 'hardhat'
-import { Membership, Membership__factory } from '../typechain'
+import chai from 'chai'
+import { Membership, Membership__factory, ProxyBuy, ProxyBuy__factory } from '../typechain'
 import signWhitelist from '../util/signWhitelist'
 import { makeInterfaceId } from '@openzeppelin/test-helpers'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
+import { solidity } from 'ethereum-waffle'
+
+chai.use(solidity)
+const { expect } = chai
 
 const config = {
     contractUri: 'placeholder.json',
-    baseUri: 'placeholder.json',
+    baseUri: 'placeholder',
     name: 'Tier 1',
     symbol: 'T1',
     price: ethers.utils.parseEther('1'),
@@ -25,6 +29,7 @@ const errorMessages = {
     invalidSig: 'Invalid Signature',
     sigUsed: 'signature used',
     tokenDNE: 'URIQueryForNonexistentToken()',
+    nonEOA: 'NonEOADisabled()',
 }
 
 const zeroAddress = '0x0000000000000000000000000000000000000000'
@@ -35,6 +40,9 @@ describe('Membership', function () {
     let passContract: Membership
     let passFactory: Membership__factory
 
+    let proxyBuyContract: ProxyBuy
+    let proxyBuyFactory: ProxyBuy__factory
+
     let chainId: number
 
     this.beforeAll(async function () {
@@ -42,6 +50,8 @@ describe('Membership', function () {
         const network = await ethers.provider.getNetwork()
         chainId = network.chainId
         passFactory = (await ethers.getContractFactory('Membership', accounts[0])) as Membership__factory
+        proxyBuyFactory = (await ethers.getContractFactory('ProxyBuy', accounts[0])) as ProxyBuy__factory
+        proxyBuyContract = await proxyBuyFactory.deploy()
     })
 
     beforeEach(async function () {
@@ -209,6 +219,10 @@ describe('Membership', function () {
             passContract = await passContract.connect(accounts[1])
             await expect(passContract.mintPublic(1)).to.be.revertedWith(errorMessages.publicDisabled)
         })
+
+        it('Fails if proxy buy attempted', async function () {
+            await expect(proxyBuyContract.claimAsContract(passContract.address)).to.be.revertedWith(errorMessages.nonEOA)
+        })
     })
 
     describe('View functions', function () {
@@ -236,7 +250,8 @@ describe('Membership', function () {
         })
 
         it('Does not return URI for non existent token', async function () {
-            await expect(passContract.tokenURI(1)).to.be.revertedWith(errorMessages.tokenDNE)
+            await passContract.mintPublic(1)
+            await expect(passContract.tokenURI(2)).to.be.revertedWith(errorMessages.tokenDNE)
         })
         it('Supports interface', async function () {
             const erc721InterfaceId = makeInterfaceId.ERC165([

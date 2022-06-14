@@ -3,7 +3,7 @@ pragma solidity 0.8.13;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "erc721a/contracts/ERC721A.sol";
+import "./erc721a/ERC721A.sol";
 
 import "./EIP712Allowlisting.sol";
 
@@ -28,7 +28,7 @@ contract Membership is ERC721A, Ownable, EIP712Allowlisting {
     bool public allowlistEnabled; /*Minting enabled for wallets on allowlist*/
     bool public publicEnabled; /*Mintin enabled for all wallets*/
 
-    mapping(address => uint256) public claimed;
+    mapping(address => uint256) public claimed; /*Track number of tokens claimed per address*/
 
     modifier callerIsUser() {
         if (tx.origin != msg.sender) revert NonEOADisabled();
@@ -74,7 +74,7 @@ contract Membership is ERC721A, Ownable, EIP712Allowlisting {
     /// @notice Mint by anyone
     /// @dev Public must be enabled
     /// @param _qty How many tokens to claim
-    function mintPublic(uint256 _qty) external {
+    function mintPublic(uint256 _qty) external callerIsUser {
         if (!publicEnabled) revert PublicDisabled();
         _claim(_qty, msg.sender);
     }
