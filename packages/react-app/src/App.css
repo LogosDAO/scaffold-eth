@@ -220,9 +220,10 @@
   font-family: 'Space Grotesk', sans-serif !important;
 }
 
-.navbar .logo-vca {
+.nav-bar .logo-vca {
   fill: #fff;
   transition: fill .5s cubic-bezier(.19,1,.22,1);
+  min-width:200px;
 }
 
 .mint-info {
