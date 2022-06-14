@@ -172,8 +172,11 @@ function App(props) {
   const allowlistEnabled = useContractReader(readContracts, "Membership", "allowlistEnabled");
   const mintSupply = useContractReader(readContracts, "Membership", "maxSupply");
   const minted = useContractReader(readContracts, "Membership", "totalSupply");
+  const connectedUserBalance = useContractReader(readContracts, "Membership", "balanceOf", [
+    address || "0x0000000000000000000000000000000000000000",
+  ]);
 
-  console.log({ mintSupply, minted });
+  console.log({ mintSupply, minted, connectedUserBalance });
 
   /*
   const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
@@ -267,9 +270,9 @@ function App(props) {
     return JSON.stringify(res, null, 2);
   };
 
-  async function postData() {
+  async function postData(address) {
     const postData = {
-      walletId: "0x00000000000",
+      walletId: address,
       emailAddress: emailAddress,
     };
 
@@ -423,19 +426,21 @@ function App(props) {
         </Container>
       </div>
 
-      <div className="register-box">
-        <h3>Join our newsletter</h3>
+      {connectedUserBalance && connectedUserBalance.gt(0) && (
+        <div className="register-box">
+          <h3>Join our newsletter</h3>
 
-        <input
-          id="register-input"
-          type="text"
-          required
-          placeholder="your email@email.com"
-          value={emailAddress}
-          onChange={e => setEmailAddress(e.target.value)}
-        />
-        <button onClick={postData}>Submit</button>
-      </div>
+          <input
+            id="register-input"
+            type="text"
+            required
+            placeholder="your email@email.com"
+            value={emailAddress}
+            onChange={e => setEmailAddress(e.target.value)}
+          />
+          <button onClick={() => postData(address)}>Submit</button>
+        </div>
+      )}
 
       <div className="footer">
         <p>2022 VCA Membership by VerticalCrypto Art. All Right Reserved.</p>
