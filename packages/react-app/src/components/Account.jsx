@@ -76,7 +76,6 @@ export default function Account({
       modalButtons.push(
         <Button
           key="loginbutton"
-      
           shape="round"
           size="large"
           /* type={minimized ? "default" : "primary"}     too many people just defaulting to MM and having a bad time */

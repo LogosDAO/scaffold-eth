@@ -1,31 +1,30 @@
 .App {
   text-align: center;
-  background:#000000;
-  color:white;
-  height:auto;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  min-height:100vh !important;
-  overflow-x:hidden;
+  background: #000000;
+  color: white;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh !important;
+  overflow-x: hidden;
 }
 
-
 .nav-bar {
-  width:92%;
-  height:10vh !important;
-  position:fixed;
-  display:flex;
-  flex-direction:row;
-  justify-content:space-between;
-  align-items:center;
-  margin: 2% 4%  !important;
-  background:rgba(0,0,0,0.5);
+  width: 92%;
+  height: 10vh !important;
+  position: fixed;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 2% 4% !important;
+  background: rgba(0, 0, 0, 0.5);
   padding: 1rem 1.875rem 1.0625rem !important;
-  border: 1px solid rgba(255,255,255,.1);
-  border-radius:5px;
-  z-index:99;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  z-index: 99;
 }
 
 .register-box {
@@ -81,19 +80,19 @@
 }
 
 .footer {
-  width:92%;
-  height:10vh !important;
-  position:relative;
-  display:flex;
-  flex-direction:row;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom: 2%  !important;
-  background:rgba(0,0,0,0.5);
+  width: 92%;
+  height: 10vh !important;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2% !important;
+  background: rgba(0, 0, 0, 0.5);
   padding: 1rem 1.875rem 1.0625rem !important;
-  border: 1px solid rgba(255,255,255,.1);
-  border-radius:5px;
-  z-index:99;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  z-index: 99;
 }
 
 .footer p {
@@ -114,64 +113,62 @@
 .socials p {
   font-size: calc(0.8vw + 0.3vh + 0.8vmin) !important;
   font-family: "neuebit-bold";
-  cursor:pointer;
+  cursor: pointer;
 }
 
 .mint-window {
-  position:relative;
+  position: relative;
   top: 7vh !important;
-  width:92%;
-  height:80vh;
+  width: 92%;
+  height: 80vh;
   padding: 1rem 1.875rem 1.0625rem !important;
-  border: 1px solid rgba(255,255,255,.1);
-  border-radius:5px;
-  margin: 5% 4%  !important;
-  background:rgba(0,0,0,0.5);
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  margin: 5% 4% !important;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .nav-bar img {
-  padding-bottom:0.5vw !important;
-  width:12vw;
-  height:auto;
+  padding-bottom: 0.5vw !important;
+  width: 12vw;
+  height: auto;
 }
 
-.nav-bar button { 
+.nav-bar button {
   background: transparent;
   border: 0px solid #fff;
-  color:#fff;
+  color: #fff;
   padding: 1% 0% !important;
-  font-size:16px;
-  font-family: 'Space Grotesk', sans-serif;
-  letter-spacing:0.4px;
-  cursor:pointer;
+  font-size: 16px;
+  font-family: "Space Grotesk", sans-serif;
+  letter-spacing: 0.4px;
+  cursor: pointer;
 }
 
-.nav-bar button:hover { 
-    color:#fff !important;
+.nav-bar button:hover {
+  color: #fff !important;
 }
 
 .viewport-header {
-  width:100%;
-  height:auto;
-  position:relative;
-  top:0;
-  left:0;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
+  width: 100%;
+  height: auto;
+  position: relative;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
-
-
 
 .bg-vid {
   position: absolute;
-  top:0;
-  left:0;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100vh;
   object-fit: cover;
@@ -179,7 +176,6 @@
   -webkit-filter: grayscale(10%); /* Safari 6.0 - 9.0 */
   filter: grayscale(10%);
   opacity: 1;
-
 }
 
 .desc-proj {
@@ -198,8 +194,8 @@
 }
 
 .viewport-header h1 {
-  position:relative;
-  z-index:9 !important;
+  position: relative;
+  z-index: 9 !important;
   font-family: "PPMondwest-Regular";
   font-size: calc(1.8vw + 0.3vh + 3.5vmin) !important;
   letter-spacing:0.8px;
@@ -207,20 +203,19 @@
 }
 
 .viewport-header h2 {
-  position:relative;
-  z-index:9 !important;
+  position: relative;
+  z-index: 9 !important;
   font-family: "neuebit-bold";
   font-size: 32px;
-  letter-spacing:0.8px;
+  letter-spacing: 0.8px;
   margin: 1% !important;
-  
 }
 .viewport-header p {
-  position:relative;
-  z-index:9 !important;
+  position: relative;
+  z-index: 9 !important;
   font-size: 20px;
-  letter-spacing:0.3px;
-  font-family: 'Space Grotesk', sans-serif !important;
+  letter-spacing: 0.3px;
+  font-family: "Space Grotesk", sans-serif !important;
 }
 
 .nav-bar .logo-vca {
@@ -245,46 +240,44 @@
   border-radius:5px;
 }
 
-
-
 .mint-price {
-  width:100%;
-  display:flex;
-  flex-direction:row;
-  justify-content:space-between;
-  align-items:center;
-  height:5vh;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 5vh;
 }
 
 .mint-supply {
-  width:100%;
-  display:flex;
-  flex-direction:row;
-  justify-content:space-between;
-  align-items:center;
-  height:5vh;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 5vh;
 }
 
 .mint-supply-remaining {
-  width:100%;
-  display:flex;
-  flex-direction:row;
-  justify-content:space-between;
-  align-items:center;
-  height:5vh;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 5vh;
 }
 
-.mint-window button { 
+.mint-window button {
   background: #fff;
   border: 1px solid #fff;
-  color:#000;
+  color: #000;
   padding: 2% 6% !important;
-  font-size:14px;
-  font-family: 'Space Grotesk', sans-serif;
-  letter-spacing:0.4px;
+  font-size: 14px;
+  font-family: "Space Grotesk", sans-serif;
+  letter-spacing: 0.4px;
   margin: 2% !important;
-  border-radius:5px;
-  cursor:pointer !important;
+  border-radius: 5px;
+  cursor: pointer !important;
 }
 
 button.testModal {
@@ -292,7 +285,6 @@ button.testModal {
 }
 
 .mint-btns {
-  
   display:flex;
   flex-direction:row;
   justify-content:center;
@@ -302,20 +294,17 @@ button.testModal {
   height:auto;
   margin-top:2% !important;
   /* border: 1px solid rgba(255,255,255,.1);*/
-
 }
 
 /* faq section */
 
-
 .faq-container {
-  width:80% !important;
-  margin-top:5vh!important;
-  
-  
+  width: 80% !important;
+  margin-top: 5vh !important;
 }
 
 .faq-container .accordion-item {
+
     min-height:8vh;
     display:flex;
     flex-direction:column;
@@ -327,21 +316,21 @@ button.testModal {
 
    border: 1px solid rgba(255,255,255,.1);
 
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-button { 
+button {
   background: #fff;
   border: 1px solid #fff;
-  color:#000;
+  color: #000;
   padding: 1% 4% !important;
-  font-size:16px;
-  font-family: 'Space Grotesk', sans-serif;
-  letter-spacing:0.4px;
+  font-size: 16px;
+  font-family: "Space Grotesk", sans-serif;
+  letter-spacing: 0.4px;
   margin: 2% !important;
-  border-radius:5px;
-  cursor:pointer;
+  border-radius: 5px;
+  cursor: pointer;
 }
-
 
 .accordion-item .accordion-button {
   border-top-left-radius: calc(0.25rem - 1px);
@@ -359,16 +348,17 @@ button {
   color: #fff !important;
 }
 
-.faq-container .accordion-body{
+.faq-container .accordion-body {
   background: transparent;
   text-align: left;
   margin: 2% 4% !important;
   color: #fff !important;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: "Space Grotesk", sans-serif;
 }
 
 .accordion-button:not(.collapsed) {
   color: #fff !important;
+  font-weight: 600;
   box-shadow: none !important;
 }
 
@@ -377,7 +367,6 @@ button {
   border-color: transparent !important;
   outline: 0;
   box-shadow: none !important;
-
 }
 
 .accordion-button:focus {
@@ -401,8 +390,5 @@ button {
   background-image: url("./img/arrow-white.svg") !important;
   background-repeat: no-repeat;
   background-size: 1.25rem;
-  transition: transform .2s ease-in-out;
+  transition: transform 0.2s ease-in-out;
 }
-
-
-

@@ -22,7 +22,7 @@ import externalContracts from "./contracts/external_contracts";
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
 import { useStaticJsonRPC } from "./hooks";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap/dist/css/bootstrap.min.css";
 
 import Modal from './components/Modal/Modal'
 
@@ -248,6 +248,11 @@ function App(props) {
   }, [loadWeb3Modal]);
 
   window.localStorage.setItem("theme", "dark");
+  const disableAllowlistButton = auths[address] === undefined || !allowlistEnabled;
+
+  const disablePublicButton = !address || !publicEnabled;
+
+  console.log({ disableAllowlistButton, disablePublicButton });
 
   // Modal
   const [modalOpen, setModalOpen] = useState ({
@@ -318,41 +323,12 @@ function App(props) {
           </div>
           
           <div className="mint-btns">
-
-          <button
-            disabled={!address || !publicEnabled}
-            onClick={async () => {
-              /* look how you call setPurpose on your contract: */
-              /* notice how you pass a call back for tx updates too */
-              const result = tx(writeContracts.Membership.mintPublic(1), update => {
-                console.log("📡 Transaction Update:", update);
-                if (update && (update.status === "confirmed" || update.status === 1)) {
-                  console.log(" 🍾 Transaction " + update.hash + " finished!");
-                  console.log(
-                    " ⛽️ " +
-                      update.gasUsed +
-                      "/" +
-                      (update.gasLimit || update.gas) +
-                      " @ " +
-                      parseFloat(update.gasPrice) / 1000000000 +
-                      " gwei",
-                  );
-                }
-              });
-              console.log("awaiting metamask/web3 confirm result...", result);
-              console.log(await result);
-            }}
-          >
-            Mint public!
-          </button>
-          <button
-            disabled={auths[address] === undefined || !allowlistEnabled}
-            onClick={async () => {
-              /* look how you call setPurpose on your contract: */
-              /* notice how you pass a call back for tx updates too */
-              const result = tx(
-                writeContracts.Membership.mintAllowList(1, auths[address].nonce, auths[address].signature),
-                update => {
+            <button
+              disabled={disablePublicButton}
+              onClick={async () => {
+                /* look how you call setPurpose on your contract: */
+                /* notice how you pass a call back for tx updates too */
+                const result = tx(writeContracts.Membership.mintPublic(1), update => {
                   console.log("📡 Transaction Update:", update);
                   if (update && (update.status === "confirmed" || update.status === 1)) {
                     console.log(" 🍾 Transaction " + update.hash + " finished!");
@@ -366,19 +342,46 @@ function App(props) {
                         " gwei",
                     );
                   }
-                },
-              );
-              console.log("awaiting metamask/web3 confirm result...", result);
-              console.log(await result);
-            }}
-          >
-            Mint allow list!
-          </button>
-
+                });
+                console.log("awaiting metamask/web3 confirm result...", result);
+                console.log(await result);
+              }}
+            >
+              Mint public!
+            </button>
+            <button
+              disabled={disableAllowlistButton}
+              onClick={async () => {
+                /* look how you call setPurpose on your contract: */
+                /* notice how you pass a call back for tx updates too */
+                const result = tx(
+                  writeContracts.Membership.mintAllowList(1, auths[address].nonce, auths[address].signature),
+                  update => {
+                    console.log("📡 Transaction Update:", update);
+                    if (update && (update.status === "confirmed" || update.status === 1)) {
+                      console.log(" 🍾 Transaction " + update.hash + " finished!");
+                      console.log(
+                        " ⛽️ " +
+                          update.gasUsed +
+                          "/" +
+                          (update.gasLimit || update.gas) +
+                          " @ " +
+                          parseFloat(update.gasPrice) / 1000000000 +
+                          " gwei",
+                      );
+                    }
+                  },
+                );
+                console.log("awaiting metamask/web3 confirm result...", result);
+                console.log(await result);
+              }}
+            >
+              Mint allow list!
+            </button>
           </div>
 
           <button className="testModal" onClick={()=>setModalOpen({bool:true})}>Test Modal</button>
-          
+
         </div>
       </div>
 
@@ -446,35 +449,34 @@ function App(props) {
 
       {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
 
-        <div className="nav-bar">
-          {USE_NETWORK_SELECTOR && (
-            <div style={{ marginRight: 20 }}>
-              <NetworkSwitch
-                networkOptions={networkOptions}
-                selectedNetwork={selectedNetwork}
-                setSelectedNetwork={setSelectedNetwork}
-              />
-            </div>
-          )}
-          <img className="logo-vca" src={logoVCA} alt="" />
-          <Account
-            useBurner={USE_BURNER_WALLET}
-            address={address}
-            localProvider={localProvider}
-            userSigner={userSigner}
-            mainnetProvider={mainnetProvider}
-            price={price}
-            web3Modal={web3Modal}
-            loadWeb3Modal={loadWeb3Modal}
-            logoutOfWeb3Modal={logoutOfWeb3Modal}
-            blockExplorer={blockExplorer}
-          />
-        </div>
-        {yourLocalBalance.lte(ethers.BigNumber.from("0")) && (
-          <FaucetHint localProvider={localProvider} targetNetwork={targetNetwork} address={address} />
+      <div className="nav-bar">
+        {USE_NETWORK_SELECTOR && (
+          <div style={{ marginRight: 20 }}>
+            <NetworkSwitch
+              networkOptions={networkOptions}
+              selectedNetwork={selectedNetwork}
+              setSelectedNetwork={setSelectedNetwork}
+            />
+          </div>
         )}
+        <img className="logo-vca" src={logoVCA} alt="" />
+        <Account
+          useBurner={USE_BURNER_WALLET}
+          address={address}
+          localProvider={localProvider}
+          userSigner={userSigner}
+          mainnetProvider={mainnetProvider}
+          price={price}
+          web3Modal={web3Modal}
+          loadWeb3Modal={loadWeb3Modal}
+          logoutOfWeb3Modal={logoutOfWeb3Modal}
+          blockExplorer={blockExplorer}
+        />
       </div>
-
+      {yourLocalBalance.lte(ethers.BigNumber.from("0")) && (
+        <FaucetHint localProvider={localProvider} targetNetwork={targetNetwork} address={address} />
+      )}
+    </div>
   );
 }
 
