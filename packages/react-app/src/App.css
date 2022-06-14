@@ -27,6 +27,58 @@
   z-index: 99;
 }
 
+.register-box {
+  width:92%;
+  height:10vh !important;
+  position:relative;
+  display:flex;
+  flex-direction:row;
+  justify-content:center;
+  align-items:center;
+  margin: 2%  !important;
+  background:rgba(0,0,0,0.5);
+  padding: 2rem !important;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius:5px;
+  z-index:99;
+}
+
+.register-box h3 {
+  margin:2% !important;
+  font-family: "PPMondwest-Regular";
+}
+
+.register-box #register-input {
+  width:30%;
+  z-index:999;
+  font-size:14px;
+  font-family: 'Space Grotesk', sans-serif;
+  color:#000;
+  padding:1% !important;
+  border-radius:5px;
+  height:4vh;
+  border: 1px solid rgba(255,255,255,.1);
+
+}
+
+.register-box #register-input:focus { 
+  outline: none !important;
+  border-color: gray;
+  box-shadow: 0 0 10px gray;
+}
+
+.register-box button {
+  background: #fff;
+  border: 1px solid #fff;
+  color:#000 !important;
+  font-size:14px;
+  font-family: 'Space Grotesk', sans-serif;
+  letter-spacing:0.4px;
+  margin: 2% !important;
+  border-radius:5px;
+  cursor:pointer !important;
+}
+
 .footer {
   width: 92%;
   height: 10vh !important;
@@ -44,20 +96,22 @@
 }
 
 .footer p {
-  font-family: "Space Grotesk", sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: calc(0.5vw + 0.3vh + 0.6vmin) !important;
+  text-align:left;
 }
 
 .socials {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  width: 15vw;
-  min-width: 250px;
+  display:flex;
+  flex-direction:row;
+  justify-content:space-between;
+  align-items:center;
+  width:15vw;
+  min-width:200px;
 }
 
 .socials p {
-  font-size: 23px;
+  font-size: calc(0.8vw + 0.3vh + 0.8vmin) !important;
   font-family: "neuebit-bold";
   cursor: pointer;
 }
@@ -125,25 +179,26 @@
 }
 
 .desc-proj {
-  width: 60%;
-  position: relative;
-  height: 85vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  width:80%;
+  position:relative;
+  height:85vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
 }
 
 .desc-proj h1 {
   font-family: "PPMondwest-Regular";
+  font-size: calc(1.8vw + 0.3vh + 2.2vmin) !important;
 }
 
 .viewport-header h1 {
   position: relative;
   z-index: 9 !important;
   font-family: "PPMondwest-Regular";
-  font-size: 55px;
-  letter-spacing: 0.8px;
+  font-size: calc(1.8vw + 0.3vh + 3.5vmin) !important;
+  letter-spacing:0.8px;
   margin: 1% !important;
 }
 
@@ -163,24 +218,26 @@
   font-family: "Space Grotesk", sans-serif !important;
 }
 
-.navbar .logo-vca {
+.nav-bar .logo-vca {
   fill: #fff;
-  transition: fill 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  transition: fill .5s cubic-bezier(.19,1,.22,1);
+  min-width:200px;
 }
 
 .mint-info {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 30vw;
-  min-width: 300px;
-  height: 25vh;
+  
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  width:30vw;
+  min-width:300px;
+  height:20vh;
   margin: 2% !important;
-
+  background: rgba(0,0,0,.6);
   padding: 2% !important;
-  /* border: 1px solid rgba(255,255,255,.1);*/
-  border-radius: 5px;
+  border: 1px solid rgba(255,255,255,.05);
+  border-radius:5px;
 }
 
 .mint-price {
@@ -223,16 +280,19 @@
   cursor: pointer !important;
 }
 
+button.testModal {
+  padding: 1% 2% !important;
+}
+
 .mint-btns {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  width: 30vw;
-  min-width: 300px;
-  height: auto;
-  margin: 2% !important;
-  padding: 2% !important;
+  display:flex;
+  flex-direction:row;
+  justify-content:center;
+  align-items:center;
+  width:30vw;
+  min-width:300px;
+  height:auto;
+  margin-top:2% !important;
   /* border: 1px solid rgba(255,255,255,.1);*/
 }
 
@@ -244,14 +304,17 @@
 }
 
 .faq-container .accordion-item {
-  min-height: 8vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: space-between;
-  padding: 2% !important;
-  background: rgba(0, 0, 0, 0.5);
-  color: #fff;
+
+    min-height:8vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:space-between;
+    padding:1% 2%!important;
+    background: rgba(0,0,0,0.5);
+    color:#fff;
+
+   border: 1px solid rgba(255,255,255,.1);
 
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -272,25 +335,23 @@ button {
 .accordion-item .accordion-button {
   border-top-left-radius: calc(0.25rem - 1px);
   border-top-right-radius: calc(0.25rem - 1px);
-  color: #fff !important;
-}
-
-.accordion-item .accordion-button {
-  border-top-left-radius: calc(0.25rem - 1px);
-  border-top-right-radius: calc(0.25rem - 1px);
-  font-size: 25px;
+  color: #fff !important;;
+  margin: 1% 2% 1% 0 !important;
   font-family: "neuebit-bold";
-}
+  font-size:25px;
+} 
 
-.faq-container .accordion-header button {
-  background: transparent;
+
+
+.faq-container .accordion-header button{
+  background:transparent;
   color: #fff !important;
 }
 
 .faq-container .accordion-body {
   background: transparent;
   text-align: left;
-  margin: 2% 6% !important;
+  margin: 2% 4% !important;
   color: #fff !important;
   font-family: "Space Grotesk", sans-serif;
 }
