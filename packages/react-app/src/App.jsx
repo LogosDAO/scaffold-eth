@@ -65,6 +65,9 @@ const providers = [
 ];
 
 function App(props) {
+
+  const [emailAddress,setEmailAddress] = useState("");
+
   // specify all the chains your app is available on. Eg: ['localhost', 'mainnet', ...otherNetworks ]
   // reference './constants.js' for other networks
   const networkOptions = [initialNetwork.name, "mainnet", "rinkeby"];
@@ -261,6 +264,7 @@ function App(props) {
 
         <div className="mint-window">
           <h1>VCA MEMBERSHIP</h1>
+          <h2>Mint your membership pass now</h2>
           <div className="mint-info">
             <div className="mint-supply">
               <h2>Mint Supply</h2>
@@ -272,7 +276,7 @@ function App(props) {
               <p>{mintSupply && minted ? mintSupply.sub(minted).toString() : "?"}</p>
             </div>
           </div>
-          <p>Mint your membership pass now</p>
+          
           <div className="mint-btns">
 
           <button
@@ -371,6 +375,19 @@ function App(props) {
             </Accordion.Item>
           </Accordion>
         </Container>
+      </div>
+
+      <div className="register-box">
+        <h3>Join our newsletter</h3>
+
+        <input id="register-input"
+        type="text"
+        required
+        placeholder="your email@email.com"
+        value={emailAddress}
+        onChange={(e) => setEmailAddress(e.target.value)}
+        />
+        <button>Submit</button>
       </div>
 
       <div className="footer">
