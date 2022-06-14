@@ -24,7 +24,7 @@ import { Transactor, Web3ModalSetup } from "./helpers";
 import { useStaticJsonRPC } from "./hooks";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import Modal from './components/Modal/Modal'
+import Modal from "./components/Modal/Modal";
 
 const auths = require("./auths.json");
 
@@ -67,8 +67,7 @@ const providers = [
 ];
 
 function App(props) {
-
-  const [emailAddress,setEmailAddress] = useState("");
+  const [emailAddress, setEmailAddress] = useState("");
 
   // specify all the chains your app is available on. Eg: ['localhost', 'mainnet', ...otherNetworks ]
   // reference './constants.js' for other networks
@@ -174,7 +173,7 @@ function App(props) {
   const mintSupply = useContractReader(readContracts, "Membership", "maxSupply");
   const minted = useContractReader(readContracts, "Membership", "totalSupply");
 
-  console.log({mintSupply, minted})
+  console.log({ mintSupply, minted });
 
   /*
   const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
@@ -257,29 +256,28 @@ function App(props) {
   console.log({ disableAllowlistButton, disablePublicButton });
 
   // Modal
-  const [modalOpen, setModalOpen] = useState ({
-    bool:false,
-    })
+  const [modalOpen, setModalOpen] = useState({
+    bool: false,
+  });
 
   // API for newsletter
   const baseURL = "https://api-vca-dev-00.azurewebsites.net/entries";
   const [postResult, setPostResult] = useState(null);
-  const fortmatResponse = (res) => {
+  const fortmatResponse = res => {
     return JSON.stringify(res, null, 2);
-  }
+  };
 
   async function postData() {
-
     const postData = {
-      "walletId": "0x00000000000",
-      "emailAddress": emailAddress,
+      walletId: "0x00000000000",
+      emailAddress: emailAddress,
     };
-    
+
     try {
       const res = await fetch(`${baseURL}`, {
         method: "post",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(postData),
       });
@@ -288,7 +286,7 @@ function App(props) {
         alert(message);
       }
       const data = await res.json();
-      console.log(data)
+      console.log(data);
     } catch (err) {
       alert(err.message);
     }
@@ -323,7 +321,7 @@ function App(props) {
               <p>{mintSupply && minted ? mintSupply.sub(minted).toString() : "?"}</p>
             </div>
           </div>
-          
+
           <div className="mint-btns">
             <button
               disabled={disablePublicButton}
@@ -382,8 +380,9 @@ function App(props) {
             </button>
           </div>
 
-          <button className="testModal" onClick={()=>setModalOpen({bool:true})}>Test Modal</button>
-
+          <button className="testModal" onClick={() => setModalOpen({ bool: true })}>
+            Test Modal
+          </button>
         </div>
       </div>
 
@@ -427,12 +426,13 @@ function App(props) {
       <div className="register-box">
         <h3>Join our newsletter</h3>
 
-        <input id="register-input"
-        type="text"
-        required
-        placeholder="your email@email.com"
-        value={emailAddress}
-        onChange={(e) => setEmailAddress(e.target.value)}
+        <input
+          id="register-input"
+          type="text"
+          required
+          placeholder="your email@email.com"
+          value={emailAddress}
+          onChange={e => setEmailAddress(e.target.value)}
         />
         <button onClick={postData}>Submit</button>
       </div>
@@ -447,7 +447,7 @@ function App(props) {
       </div>
 
       {/* modal */}
-      {modalOpen.bool && <Modal setOpenModal={setModalOpen}/>}
+      {modalOpen.bool && <Modal setOpenModal={setModalOpen} />}
 
       {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
 
