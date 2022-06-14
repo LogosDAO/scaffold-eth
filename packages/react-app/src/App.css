@@ -98,7 +98,7 @@
 
 .footer p {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: calc(0.8vw + 0.3vh + 0.8vmin) !important;
+  font-size: calc(0.5vw + 0.3vh + 0.6vmin) !important;
   text-align:left;
 }
 
@@ -321,7 +321,7 @@ button.testModal {
     flex-direction:column;
     justify-content:center;
     align-items:space-between;
-    padding:2% !important;
+    padding:1% 2%!important;
     background: rgba(0,0,0,0.5);
     color:#fff;
 
