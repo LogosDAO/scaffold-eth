@@ -24,6 +24,8 @@ import { Transactor, Web3ModalSetup } from "./helpers";
 import { useStaticJsonRPC } from "./hooks";
 import "bootstrap/dist/css/bootstrap.min.css";
 
+import Modal from './components/Modal/Modal'
+
 const auths = require("./auths.json");
 
 const { ethers } = require("ethers");
@@ -65,6 +67,9 @@ const providers = [
 ];
 
 function App(props) {
+
+  const [emailAddress,setEmailAddress] = useState("");
+
   // specify all the chains your app is available on. Eg: ['localhost', 'mainnet', ...otherNetworks ]
   // reference './constants.js' for other networks
   const networkOptions = [initialNetwork.name, "mainnet", "rinkeby"];
@@ -249,6 +254,44 @@ function App(props) {
 
   console.log({ disableAllowlistButton, disablePublicButton });
 
+  // Modal
+  const [modalOpen, setModalOpen] = useState ({
+    bool:false,
+    })
+
+  // API for newsletter
+  const baseURL = "https://api-vca-dev-00.azurewebsites.net/entries";
+  const [postResult, setPostResult] = useState(null);
+  const fortmatResponse = (res) => {
+    return JSON.stringify(res, null, 2);
+  }
+
+  async function postData() {
+
+    const postData = {
+      "walletId": "0x00000000000",
+      "emailAddress": emailAddress,
+    };
+    
+    try {
+      const res = await fetch(`${baseURL}`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(postData),
+      });
+      if (!res.ok) {
+        const message = `An error has occured: ${res.status} - ${res.statusText}`;
+        alert(message);
+      }
+      const data = await res.json();
+      console.log(data)
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
   return (
     <div className="App">
       {/* ✏️ Edit the header and change the title to your project name */}
@@ -266,6 +309,7 @@ function App(props) {
 
         <div className="mint-window">
           <h1>VCA MEMBERSHIP</h1>
+          <h2>Mint your membership pass now</h2>
           <div className="mint-info">
             <div className="mint-supply">
               <h2>Mint Supply</h2>
@@ -277,7 +321,7 @@ function App(props) {
               <p>{mintSupply && minted ? mintSupply.sub(minted).toString() : "?"}</p>
             </div>
           </div>
-          <p>Mint your membership pass now</p>
+          
           <div className="mint-btns">
             <button
               disabled={disablePublicButton}
@@ -335,6 +379,9 @@ function App(props) {
               Mint allow list!
             </button>
           </div>
+
+          <button className="testModal" onClick={()=>setModalOpen({bool:true})}>Test Modal</button>
+
         </div>
       </div>
 
@@ -375,6 +422,19 @@ function App(props) {
         </Container>
       </div>
 
+      <div className="register-box">
+        <h3>Join our newsletter</h3>
+
+        <input id="register-input"
+        type="text"
+        required
+        placeholder="your email@email.com"
+        value={emailAddress}
+        onChange={(e) => setEmailAddress(e.target.value)}
+        />
+        <button onClick={postData}>Submit</button>
+      </div>
+
       <div className="footer">
         <p>2022 VCA Membership by VerticalCrypto Art. All Right Reserved.</p>
         <div className="socials">
@@ -383,6 +443,9 @@ function App(props) {
           <p>Twitter</p>
         </div>
       </div>
+
+      {/* modal */}
+      {modalOpen.bool && <Modal setOpenModal={setModalOpen}/>}
 
       {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
 
