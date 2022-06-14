@@ -24,7 +24,10 @@ import { Transactor, Web3ModalSetup } from "./helpers";
 import { useStaticJsonRPC } from "./hooks";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import Modal from "./components/Modal/Modal";
+
+import Modal from './components/Modal/Modal'
+import ModalEmail from './components/Modal/ModalEmail'
+
 
 const auths = require("./auths.json");
 
@@ -263,6 +266,10 @@ function App(props) {
     bool: false,
   });
 
+    const [modalOpenEmail, setModalOpenEmail] = useState ({
+      bool:false,
+      })
+
   // API for newsletter
   const baseURL = "https://api-vca-dev-00.azurewebsites.net/entries";
   const [postResult, setPostResult] = useState(null);
@@ -289,7 +296,10 @@ function App(props) {
         alert(message);
       }
       const data = await res.json();
-      console.log(data);
+
+      console.log(data)
+      setModalOpenEmail({bool:true})
+
     } catch (err) {
       alert(err.message);
     }
@@ -426,6 +436,7 @@ function App(props) {
         </Container>
       </div>
 
+
       {connectedUserBalance && connectedUserBalance.gt(0) && (
         <div className="register-box">
           <h3>Join our newsletter</h3>
@@ -442,6 +453,7 @@ function App(props) {
         </div>
       )}
 
+
       <div className="footer">
         <p>2022 VCA Membership by VerticalCrypto Art. All Right Reserved.</p>
         <div className="socials">
@@ -452,7 +464,10 @@ function App(props) {
       </div>
 
       {/* modal */}
-      {modalOpen.bool && <Modal setOpenModal={setModalOpen} />}
+
+      {modalOpen.bool && <Modal setOpenModal={setModalOpen}/>}
+      {modalOpenEmail.bool && <ModalEmail setOpenModal={setModalOpenEmail} emailAddress={emailAddress}/>}
+
 
       {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
 
