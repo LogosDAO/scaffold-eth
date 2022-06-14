@@ -98,6 +98,8 @@
 
 .footer p {
   font-family: 'Space Grotesk', sans-serif;
+  font-size: calc(0.8vw + 0.3vh + 0.8vmin) !important;
+  text-align:left;
 }
 
 .socials {
@@ -110,7 +112,7 @@
 }
 
 .socials p {
-  font-size:23px;
+  font-size: calc(0.8vw + 0.3vh + 0.8vmin) !important;
   font-family: "neuebit-bold";
   cursor:pointer;
 }
@@ -181,7 +183,7 @@
 }
 
 .desc-proj {
-  width:60%;
+  width:80%;
   position:relative;
   height:85vh;
   display:flex;
@@ -192,13 +194,14 @@
 
 .desc-proj h1 {
   font-family: "PPMondwest-Regular";
+  font-size: calc(1.8vw + 0.3vh + 2.5vmin) !important;
 }
 
 .viewport-header h1 {
   position:relative;
   z-index:9 !important;
   font-family: "PPMondwest-Regular";
-  font-size: 55px;
+  font-size: calc(1.8vw + 0.3vh + 3.5vmin) !important;
   letter-spacing:0.8px;
   margin: 1% !important;
 }
