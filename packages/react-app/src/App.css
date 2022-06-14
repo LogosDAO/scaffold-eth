@@ -283,6 +283,10 @@
   cursor:pointer !important;
 }
 
+button.testModal {
+  padding: 1% 2% !important;
+}
+
 .mint-btns {
   
   display:flex;

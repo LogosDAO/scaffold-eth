@@ -24,6 +24,8 @@ import { Transactor, Web3ModalSetup } from "./helpers";
 import { useStaticJsonRPC } from "./hooks";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+import Modal from './components/Modal/Modal'
+
 const auths = require("./auths.json");
 
 const { ethers } = require("ethers");
@@ -247,6 +249,44 @@ function App(props) {
 
   window.localStorage.setItem("theme", "dark");
 
+  // Modal
+  const [modalOpen, setModalOpen] = useState ({
+    bool:false,
+    })
+
+  // API for newsletter
+  const baseURL = "https://api-vca-dev-00.azurewebsites.net/entries";
+  const [postResult, setPostResult] = useState(null);
+  const fortmatResponse = (res) => {
+    return JSON.stringify(res, null, 2);
+  }
+
+  async function postData() {
+
+    const postData = {
+      "walletId": "0x00000000000",
+      "emailAddress": emailAddress,
+    };
+    
+    try {
+      const res = await fetch(`${baseURL}`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(postData),
+      });
+      if (!res.ok) {
+        const message = `An error has occured: ${res.status} - ${res.statusText}`;
+        alert(message);
+      }
+      const data = await res.json();
+      console.log(data)
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
   return (
     <div className="App">
       {/* ✏️ Edit the header and change the title to your project name */}
@@ -336,6 +376,8 @@ function App(props) {
           </button>
 
           </div>
+
+          <button className="testModal" onClick={()=>setModalOpen({bool:true})}>Test Modal</button>
           
         </div>
       </div>
@@ -387,7 +429,7 @@ function App(props) {
         value={emailAddress}
         onChange={(e) => setEmailAddress(e.target.value)}
         />
-        <button>Submit</button>
+        <button onClick={postData}>Submit</button>
       </div>
 
       <div className="footer">
@@ -398,6 +440,9 @@ function App(props) {
           <p>Twitter</p>
         </div>
       </div>
+
+      {/* modal */}
+      {modalOpen.bool && <Modal setOpenModal={setModalOpen}/>}
 
       {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
 
