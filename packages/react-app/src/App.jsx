@@ -22,6 +22,7 @@ import externalContracts from "./contracts/external_contracts";
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
 import { useStaticJsonRPC } from "./hooks";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const auths = require("./auths.json");
 
@@ -272,9 +273,9 @@ function App(props) {
             </div>
           </div>
           <p>Mint your membership pass now</p>
+          <div className="mint-btns">
 
           <button
-            style={{ marginTop: 8 }}
             disabled={!address || !publicEnabled}
             onClick={async () => {
               /* look how you call setPurpose on your contract: */
@@ -301,7 +302,6 @@ function App(props) {
             Mint public!
           </button>
           <button
-            style={{ marginTop: 8 }}
             disabled={auths[address] === undefined || !allowlistEnabled}
             onClick={async () => {
               /* look how you call setPurpose on your contract: */
@@ -330,6 +330,9 @@ function App(props) {
           >
             Mint allow list!
           </button>
+
+          </div>
+          
         </div>
       </div>
 
@@ -380,8 +383,8 @@ function App(props) {
       </div>
 
       {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
-      <div style={{ position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10 }}>
-        <div style={{ display: "flex", flex: 1, alignItems: "center" }}>
+
+        <div className="nav-bar">
           {USE_NETWORK_SELECTOR && (
             <div style={{ marginRight: 20 }}>
               <NetworkSwitch
@@ -409,7 +412,7 @@ function App(props) {
           <FaucetHint localProvider={localProvider} targetNetwork={targetNetwork} address={address} />
         )}
       </div>
-    </div>
+
   );
 }
 

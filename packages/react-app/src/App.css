@@ -217,13 +217,28 @@
   background: #fff;
   border: 1px solid #fff;
   color:#000;
-  padding: 1% 4% !important;
-  font-size:16px;
+  padding: 2% 6% !important;
+  font-size:14px;
   font-family: 'Space Grotesk', sans-serif;
   letter-spacing:0.4px;
   margin: 2% !important;
   border-radius:5px;
-  cursor:pointer;
+  cursor:pointer !important;
+}
+
+.mint-btns {
+  
+  display:flex;
+  flex-direction:row;
+  justify-content:center;
+  align-items:center;
+  width:30vw;
+  min-width:300px;
+  height:auto;
+  margin: 2% !important;
+  padding: 2% !important;
+  /* border: 1px solid rgba(255,255,255,.1);*/
+
 }
 
 /* faq section */
@@ -248,6 +263,19 @@
 
    border: 1px solid rgba(255,255,255,.1);
 
+}
+
+button { 
+  background: #fff;
+  border: 1px solid #fff;
+  color:#000;
+  padding: 1% 4% !important;
+  font-size:16px;
+  font-family: 'Space Grotesk', sans-serif;
+  letter-spacing:0.4px;
+  margin: 2% !important;
+  border-radius:5px;
+  cursor:pointer;
 }
 
 
@@ -275,7 +303,7 @@
 .faq-container .accordion-body{
   background: transparent;
   text-align: left;
-  margin: 2% 0% !important;
+  margin: 2% 6% !important;
   color: #fff !important;
   font-family: 'Space Grotesk', sans-serif;
 }
