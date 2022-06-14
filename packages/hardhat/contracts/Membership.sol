@@ -11,6 +11,7 @@ error MaxSupplyExceeded();
 error ClaimLimitExceeded();
 error AllowlistDisabled();
 error PublicDisabled();
+error NonEOADisabled();
 
 /// @title Membership NFT
 /// @notice Membership contract with public sale
@@ -28,6 +29,11 @@ contract Membership is ERC721A, Ownable, EIP712Allowlisting {
     bool public publicEnabled; /*Mintin enabled for all wallets*/
 
     mapping(address => uint256) public claimed;
+
+    modifier callerIsUser() {
+        if (tx.origin != msg.sender) revert NonEOADisabled();
+        _;
+    }
 
     /// @notice setup configures interfaces and production metadata
     /// @param name_ Token name
