@@ -1,100 +1,96 @@
 .modalBackground {
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.75);
-    position: fixed;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    top: 0 !important;
-    z-index:999999;
-  }
-  
-  .modalContainer {
-    width: 40%;
-    height: 40vh;
-    border-radius: 12px;
-    background-color: black;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-    display: flex;
-    flex-direction: column;
-    justify-content:center;
-    align-items:center;
-    padding: 25px !important;
-    border: 1px solid rgba(255,255,255,.1);
-    z-index:9999999;
-    
-  
-  }
-  
-  .modalContainer .title-modal {
-    display: inline-block;
-    text-align: center;
-    margin-top: 10px;
-    font-family: "PPMondwest-Regular";
-  }
-  
-  .modalContainer .title-modal h2{
-    font-size:calc(0.5vw + 0.5vh + 0.6vmin);
-  }
-  
-  .modalContainer .title-modal h2 span{
-    font-weight:bold;
-  }
-  
-  .titleCloseBtn {
-    display: flex;
-    justify-content: flex-end;
-  }
-  
-  .titleCloseBtn button {
-    background-color: transparent;
-    border: none;
-    font-size: 25px;
-    cursor: pointer;
-  }
-  
-  .modalContainer .body-modal {
-    flex: 70%;
-    display: flex;
-    justify-content: start;
-    align-items: center;
-    font-size: 0.8rem;
-    text-align: center;
-  }
-  
-  .modalContainer .body-modal p {
-    font-size: calc(0.5vw + 0.4vh + 0.4vmin);
-    line-height:calc(0.5vw + 0.5vh + 0.6vmin);
-  }
-  
-  .modalContainer .body-modal p span{
-    font-size: calc(0.8vw + 0.5vh + 0.5vmin);
-    font-weight: bold;
-  }
-  
-  .modalContainer .footer-modal {
-    flex: 20%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .modalContainer .footer-modal button {
-    width: 150px;
-    height: 45px;
-    margin: 10px;
-    border: none;
-    background-color: white;
-    color: black;
-    border-radius: 8px;
-    font-size: calc(0.5vw + 0.5vh + 0.3vmin);
-    cursor: pointer;
-  }
-  
-  
-  .body-modal {
-    padding: 0;
-    margin: 0;
-  }
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.75);
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0 !important;
+  z-index: 999999;
+}
 
+.modalContainer {
+  width: 40%;
+  height: 40vh;
+  border-radius: 12px;
+  background-color: black;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 25px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 9999999;
+}
+
+.modalContainer .title-modal {
+  display: inline-block;
+  text-align: center;
+  margin-top: 10px;
+  font-family: "PPMondwest-Regular";
+}
+
+.modalContainer .title-modal h2 {
+  font-size: calc(0.5vw + 0.5vh + 0.6vmin);
+}
+
+.modalContainer .title-modal h2 span {
+  font-weight: bold;
+}
+
+.titleCloseBtn {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.titleCloseBtn button {
+  background-color: transparent;
+  border: none;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+.modalContainer .body-modal {
+  flex: 70%;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.modalContainer .body-modal p {
+  font-size: calc(0.5vw + 0.4vh + 0.4vmin);
+  line-height: calc(0.5vw + 0.5vh + 0.6vmin);
+}
+
+.modalContainer .body-modal p span {
+  font-size: calc(0.8vw + 0.5vh + 0.5vmin);
+  font-weight: bold;
+}
+
+.modalContainer .footer-modal {
+  flex: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modalContainer .footer-modal button {
+  width: 150px;
+  height: 45px;
+  margin: 10px;
+  border: none;
+  background-color: white;
+  color: black;
+  border-radius: 8px;
+  font-size: calc(0.5vw + 0.5vh + 0.3vmin);
+  cursor: pointer;
+}
+
+.body-modal {
+  padding: 0;
+  margin: 0;
+}

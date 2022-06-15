@@ -24,10 +24,8 @@ import { Transactor, Web3ModalSetup } from "./helpers";
 import { useStaticJsonRPC } from "./hooks";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-
-import Modal from './components/Modal/Modal'
-import ModalEmail from './components/Modal/ModalEmail'
-
+import Modal from "./components/Modal/Modal";
+import ModalEmail from "./components/Modal/ModalEmail";
 
 const auths = require("./auths.json");
 
@@ -178,6 +176,9 @@ function App(props) {
   const connectedUserBalance = useContractReader(readContracts, "Membership", "balanceOf", [
     address || "0x0000000000000000000000000000000000000000",
   ]);
+  const connectedUserClaimed = useContractReader(readContracts, "Membership", "claimed", [
+    address || "0x0000000000000000000000000000000000000000",
+  ]);
 
   console.log({ mintSupply, minted, connectedUserBalance });
 
@@ -266,16 +267,16 @@ function App(props) {
     bool: false,
   });
 
-    const [modalOpenEmail, setModalOpenEmail] = useState ({
-      bool:false,
-      })
+  const [modalOpenEmail, setModalOpenEmail] = useState({
+    bool: false,
+  });
 
   // API for newsletter
   const baseURL = "https://api-vca-dev-00.azurewebsites.net/entries";
-  const [postResult, setPostResult] = useState(null);
-  const fortmatResponse = res => {
-    return JSON.stringify(res, null, 2);
-  };
+  // const [postResult, setPostResult] = useState(null);
+  // const fortmatResponse = res => {
+  //   return JSON.stringify(res, null, 2);
+  // };
 
   async function postData(address) {
     const postData = {
@@ -297,9 +298,8 @@ function App(props) {
       }
       const data = await res.json();
 
-      console.log(data)
-      setModalOpenEmail({bool:true})
-
+      console.log(data);
+      setModalOpenEmail({ bool: true });
     } catch (err) {
       alert(err.message);
     }
@@ -323,6 +323,7 @@ function App(props) {
         <div className="mint-window">
           <h1>VCA MEMBERSHIP</h1>
           <h2>Mint your membership pass now</h2>
+          {address && <h2>{`${address} is ${auths[address] ? "" : "not "} on the allow list`}</h2>}
           <div className="mint-info">
             <div className="mint-supply">
               <h2>Mint Supply</h2>
@@ -332,6 +333,11 @@ function App(props) {
             <div className="mint-supply-remaining">
               <h2>Remaining Supply</h2>
               <p>{mintSupply && minted ? mintSupply.sub(minted).toString() : "?"}</p>
+            </div>
+
+            <div className="mint-supply-remaining">
+              <h2>Your balance</h2>
+              <p>{connectedUserClaimed ? connectedUserClaimed.toString() : "0"}</p>
             </div>
           </div>
 
@@ -393,11 +399,27 @@ function App(props) {
             </button>
           </div>
 
-          <button className="testModal" onClick={() => setModalOpen({ bool: true })}>
+          {/* <button className="testModal" onClick={() => setModalOpen({ bool: true })}>
             Test Modal
-          </button>
+          </button> */}
         </div>
       </div>
+
+      {connectedUserBalance && connectedUserBalance.gt(0) && (
+        <div className="register-box">
+          <h3>Register to receive updates on your membership benefits</h3>
+
+          <input
+            id="register-input"
+            type="text"
+            required
+            placeholder="your email@email.com"
+            value={emailAddress}
+            onChange={e => setEmailAddress(e.target.value)}
+          />
+          <button onClick={() => postData(address)}>Submit</button>
+        </div>
+      )}
 
       <div className="desc-proj">
         <h1>Membership F.A.Q</h1>
@@ -436,24 +458,6 @@ function App(props) {
         </Container>
       </div>
 
-
-      {connectedUserBalance && connectedUserBalance.gt(0) && (
-        <div className="register-box">
-          <h3>Join our newsletter</h3>
-
-          <input
-            id="register-input"
-            type="text"
-            required
-            placeholder="your email@email.com"
-            value={emailAddress}
-            onChange={e => setEmailAddress(e.target.value)}
-          />
-          <button onClick={() => postData(address)}>Submit</button>
-        </div>
-      )}
-
-
       <div className="footer">
         <p>2022 VCA Membership by VerticalCrypto Art. All Right Reserved.</p>
         <div className="socials">
@@ -465,9 +469,8 @@ function App(props) {
 
       {/* modal */}
 
-      {modalOpen.bool && <Modal setOpenModal={setModalOpen}/>}
-      {modalOpenEmail.bool && <ModalEmail setOpenModal={setModalOpenEmail} emailAddress={emailAddress}/>}
-
+      {modalOpen.bool && <Modal setOpenModal={setModalOpen} />}
+      {modalOpenEmail.bool && <ModalEmail setOpenModal={setModalOpenEmail} emailAddress={emailAddress} />}
 
       {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
 

@@ -9,6 +9,7 @@ import 'dotenv/config'
 
 import 'hardhat-deploy'
 import 'hardhat-gas-reporter'
+import "solidity-coverage";
 
 
 import { task } from 'hardhat/config'
