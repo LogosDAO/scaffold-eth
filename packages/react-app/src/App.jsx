@@ -256,9 +256,14 @@ function App(props) {
   }, [loadWeb3Modal]);
 
   window.localStorage.setItem("theme", "dark");
-  const disableAllowlistButton = auths[address] === undefined || !allowlistEnabled;
+  const disableAllowlistButton =
+    auths[address] === undefined ||
+    !allowlistEnabled ||
+    connectedUserClaimed >= 2 ||
+    (mintSupply && minted && mintSupply.eq(minted));
 
-  const disablePublicButton = !address || !publicEnabled;
+  const disablePublicButton =
+    !address || !publicEnabled || connectedUserClaimed >= 2 || (mintSupply && minted && mintSupply.eq(minted));
 
   console.log({ disableAllowlistButton, disablePublicButton });
 

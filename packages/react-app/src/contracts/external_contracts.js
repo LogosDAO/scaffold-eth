@@ -1234,7 +1234,7 @@ module.exports = {
   4: {
     contracts: {
       Membership: {
-        address: "0x1cB705c9C72ac846b5818a52DA6c3Ab87446EEBF",
+        address: "0xf1e654e5ca32bb4a0878568b2293ed072fd91805",
         abi: membershipAbi,
       },
     },

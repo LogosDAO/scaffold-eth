@@ -7,35 +7,28 @@ const saveMetadata = (outputdir: string, _metadata: any, edition: string) => {
     fs.writeFileSync(`${outputdir}/${edition}.json`, JSON.stringify(_metadata))
 }
 task('generate-metadata', 'Generate metadata files')
-    .addParam<string>('name', 'Token name')
-    .addParam<string>('desc', 'Token description')
     .addParam<string>('qty', 'Amount')
     .addParam<string>('start', 'Token ID start')
     .addParam<string>('max', 'Total supply')
     .addParam<string>('output', 'output folder')
-    .addParam<string>('image', 'still image')
-    .addParam<string>('animation', 'animation')
     .setAction(async (taskArgs, { ethers }) => {
-      
-        
-        
-    for (let index = 0; index < taskArgs.qty; index++) {
-        const tokenId = parseInt(taskArgs.start) + index
-        const metadata = {
-            name: taskArgs.name,
-            description: taskArgs.desc,
-            image: taskArgs.image,
-            animation_url: taskArgs.animation,
-            // external_url: taskArgs.ws,
-            attributes: [
-                {
-                    trait_type: 'Token Number',
-                    value: `${tokenId} of ${taskArgs.max}`
-                },
-            ],
-        }
-        
-        saveMetadata(taskArgs.output, metadata, tokenId.toString())
-    }
+        for (let index = 0; index < taskArgs.qty; index++) {
+            const tokenId = parseInt(taskArgs.start) + index
+            const metadata = {
+                name: 'VCA Genesis Membership',
+                description: 'VCA Genesis Membership',
+                image: 'ipfs://QmSNgXwdHQ1SwHK42TEaLZM8zVV9zjZxNu3zzcc7Zk7rNr',
+                animation_url: 'ipfs://QmYJxtY5jLsS2mrEjYt6Wv99p5XB2PNTsGZvdgEnp87Q2s',
+                external_url: 'https://vcamembership.verticalcrypto.art/',
+                attributes: [
+                    {
+                        trait_type: 'Token Number',
+                        value: `${tokenId + 1} of ${taskArgs.max}`,
+                    },
+                    { trait_type: 'Artist', value: 'Linda Dounia' },
+                ],
+            }
 
+            saveMetadata(taskArgs.output, metadata, tokenId.toString())
+        }
     })
