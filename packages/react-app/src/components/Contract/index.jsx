@@ -65,6 +65,8 @@ export default function Contract({
     contract = customContract;
   }
 
+  console.log({ contract });
+
   const address = contract ? contract.address : "";
   const contractIsDeployed = useContractExistsAtAddress(provider, address);
 

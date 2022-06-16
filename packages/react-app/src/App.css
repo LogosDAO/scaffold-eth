@@ -1,4 +1,397 @@
 .App {
   text-align: center;
-  padding-left: calc(100vw - 100%);
+  background: #000000;
+  color: white;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh !important;
+  overflow-x: hidden;
+}
+
+.nav-bar {
+  width: 92%;
+  height: 10vh !important;
+  position: fixed;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 2% 4% !important;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 1rem 1.875rem 1.0625rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  z-index: 99;
+}
+
+.register-box {
+  width: 92%;
+  height: 10vh !important;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 2% !important;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 2rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  z-index: 99;
+}
+
+.register-box h3 {
+  margin: 2% !important;
+  font-family: "PPMondwest-Regular";
+}
+
+.register-box #register-input {
+  width: 30%;
+  z-index: 999;
+  font-size: 14px;
+  font-family: "Space Grotesk", sans-serif;
+  color: #000;
+  padding: 1% !important;
+  border-radius: 5px;
+  height: 4vh;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.register-box #register-input:focus {
+  outline: none !important;
+  border-color: gray;
+  box-shadow: 0 0 10px gray;
+}
+
+.register-box button {
+  background: #fff;
+  border: 1px solid #fff;
+  color: #000 !important;
+  font-size: 14px;
+  font-family: "Space Grotesk", sans-serif;
+  letter-spacing: 0.4px;
+  margin: 2% !important;
+  border-radius: 5px;
+  cursor: pointer !important;
+}
+
+.footer {
+  width: 92%;
+  height: 10vh !important;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2% !important;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 1rem 1.875rem 1.0625rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  z-index: 99;
+}
+
+.footer p {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: calc(0.5vw + 0.3vh + 0.6vmin) !important;
+  text-align: left;
+}
+
+.socials {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 15vw;
+  min-width: 200px;
+}
+
+.socials p {
+  font-size: calc(0.8vw + 0.3vh + 0.8vmin) !important;
+  font-family: "neuebit-bold";
+  cursor: pointer;
+}
+
+.mint-window {
+  position: relative;
+  top: 7vh !important;
+  width: 92%;
+  height: 80vh;
+  padding: 1rem 1.875rem 1.0625rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  margin: 5% 4% !important;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-bar img {
+  padding-bottom: 0.5vw !important;
+  width: 12vw;
+  height: auto;
+}
+
+.nav-bar button {
+  background: transparent;
+  border: 0px solid #fff;
+  color: #fff;
+  padding: 1% 0% !important;
+  font-size: 16px;
+  font-family: "Space Grotesk", sans-serif;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+}
+
+.nav-bar button:hover {
+  color: #fff !important;
+}
+
+.viewport-header {
+  width: 100%;
+  height: auto;
+  position: relative;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.bg-vid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  object-fit: cover;
+  z-index: 0;
+  -webkit-filter: grayscale(10%); /* Safari 6.0 - 9.0 */
+  filter: grayscale(10%);
+  opacity: 1;
+}
+
+.desc-proj {
+  width: 80%;
+  position: relative;
+  height: 85vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.desc-proj h1 {
+  font-family: "PPMondwest-Regular";
+  font-size: calc(1.8vw + 0.3vh + 2.2vmin) !important;
+}
+
+.viewport-header h1 {
+  position: relative;
+  z-index: 9 !important;
+  font-family: "PPMondwest-Regular";
+  font-size: calc(1.8vw + 0.3vh + 3.5vmin) !important;
+  letter-spacing: 0.8px;
+  margin: 1% !important;
+}
+
+.viewport-header h2 {
+  position: relative;
+  z-index: 9 !important;
+  font-family: "neuebit-bold";
+  font-size: 32px;
+  letter-spacing: 0.8px;
+  margin: 1% !important;
+}
+.viewport-header p {
+  position: relative;
+  z-index: 9 !important;
+  font-size: 20px;
+  letter-spacing: 0.3px;
+  font-family: "Space Grotesk", sans-serif !important;
+}
+
+.nav-bar .logo-vca {
+  fill: #fff;
+  transition: fill 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  min-width: 200px;
+}
+
+.mint-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 30vw;
+  min-width: 300px;
+  height: 20vh;
+  margin: 2% !important;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 2% !important;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 5px;
+}
+
+.mint-price {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 5vh;
+}
+
+.mint-supply {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 5vh;
+}
+
+.mint-supply-remaining {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 5vh;
+}
+
+.mint-window button {
+  background: #fff;
+  border: 1px solid #fff;
+  color: #000;
+  padding: 2% 6% !important;
+  font-size: 14px;
+  font-family: "Space Grotesk", sans-serif;
+  letter-spacing: 0.4px;
+  margin: 2% !important;
+  border-radius: 5px;
+  cursor: pointer !important;
+}
+
+button.testModal {
+  padding: 1% 2% !important;
+}
+
+.mint-btns {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 30vw;
+  min-width: 300px;
+  height: auto;
+  margin-top: 2% !important;
+  /* border: 1px solid rgba(255,255,255,.1);*/
+}
+
+button:disabled {
+  background:#838383;
+  border: 1px #838383 solid;
+  color:#131313;
+  cursor:default !important;
+
+}
+
+/* faq section */
+
+.faq-container {
+  width: 80% !important;
+  margin-top: 5vh !important;
+}
+
+.faq-container .accordion-item {
+  min-height: 8vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: space-between;
+  padding: 1% 2% !important;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+button {
+  background: #fff;
+  border: 1px solid #fff;
+  color: #000;
+  padding: 1% 4% !important;
+  font-size: 16px;
+  font-family: "Space Grotesk", sans-serif;
+  letter-spacing: 0.4px;
+  margin: 2% !important;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.accordion-item .accordion-button {
+  border-top-left-radius: calc(0.25rem - 1px);
+  border-top-right-radius: calc(0.25rem - 1px);
+  color: #fff !important;
+  margin: 1% 2% 1% 0 !important;
+  font-family: "neuebit-bold";
+  font-size: 25px;
+}
+
+.faq-container .accordion-header button {
+  background: transparent;
+  color: #fff !important;
+}
+
+.faq-container .accordion-body {
+  background: transparent;
+  text-align: left;
+  margin: 2% 4% !important;
+  color: #fff !important;
+  font-family: "Space Grotesk", sans-serif;
+}
+
+.accordion-button:not(.collapsed) {
+  color: #fff !important;
+  font-weight: 600;
+  box-shadow: none !important;
+}
+
+.accordion-button:focus {
+  z-index: 3;
+  border-color: transparent !important;
+  outline: 0;
+  box-shadow: none !important;
+}
+
+.accordion-button:focus {
+  z-index: 3;
+  border-color: transparent;
+  outline: 0;
+  box-shadow: none !important;
+}
+
+.accordion-button:not(.collapsed)::after {
+  background-image: url("./img/arrow-white.svg") !important;
+  transform: rotate(-180deg);
+}
+
+.accordion-button::after {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-left: auto;
+  content: "";
+  background-image: url("./img/arrow-white.svg") !important;
+  background-repeat: no-repeat;
+  background-size: 1.25rem;
+  transition: transform 0.2s ease-in-out;
 }
