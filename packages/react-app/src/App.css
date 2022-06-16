@@ -27,6 +27,15 @@
   z-index: 99;
 }
 
+.nav-bar .left-nav {
+  display:flex;
+  flex-direction:row;
+  justify-content:space-between;
+  align-items:center;
+  width:100% !important;
+  background:transparent;
+}
+
 .register-box {
   width: 92%;
   height: 10vh !important;
@@ -130,8 +139,8 @@
   align-items: center;
 }
 
-.nav-bar img {
-  padding-bottom: 0.5vw !important;
+.nav-bar img.logo-vca {
+
   width: 12vw;
   height: auto;
 }
@@ -224,6 +233,20 @@
   min-width: 200px;
 }
 
+.area-logo {
+  margin-right:15px !important;
+}
+
+.area-logo img{
+  height:auto;
+  width:2.3vh !important;
+  margin:5px !important;
+  max-width:30px;
+}
+
+.area-logo img:nth-child(3){
+  width:2.8vh !important;
+}
 .mint-info {
   display: flex;
   flex-direction: column;

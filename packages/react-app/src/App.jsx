@@ -13,6 +13,9 @@ import "./App.css";
 import "./bootstrap.min.css";
 import heroImage from "./img/header-img-residency-test.png";
 import logoVCA from "./img/logo.svg";
+import logoTwitter from "./img/twitter.svg";
+import logoDiscord from "./img/discord.svg";
+import logoEtherscan from "./img/etherscan.svg";
 import Accordion from "react-bootstrap/Accordion";
 import Container from "react-bootstrap/Container";
 import { Account, FaucetHint, NetworkDisplay, NetworkSwitch } from "./components";
@@ -524,8 +527,22 @@ function App(props) {
             />
           </div>
         )}
-        <img className="logo-vca" src={logoVCA} alt="" />
-       
+
+        <div className="left-nav">
+
+          <img className="logo-vca" src={logoVCA} alt="" />
+
+          <div className="area-logo">
+                <img className="logo-socials" src={logoTwitter} alt="" />
+                <img className="logo-etherscan" src={logoEtherscan} alt="" />
+                <img className="logo-discord" src={logoDiscord} alt="" />
+
+                
+          </div>
+
+        </div>
+        
+
         <Account
           useBurner={USE_BURNER_WALLET}
           address={address}
