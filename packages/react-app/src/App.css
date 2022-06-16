@@ -116,7 +116,7 @@
   align-items: center;
 }
 
-.socials p a {
+.socials p {
   font-size: calc(0.8vw + 0.3vh + 0.8vmin) !important;
   font-family: "neuebit-bold";
   cursor: pointer;
