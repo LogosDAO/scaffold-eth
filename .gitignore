@@ -67,3 +67,5 @@ yarn-error.log*
 /doc
 
 typechain/
+
+packages/hardhat/metadata/*

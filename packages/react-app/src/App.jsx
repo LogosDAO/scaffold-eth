@@ -24,10 +24,8 @@ import { Transactor, Web3ModalSetup } from "./helpers";
 import { useStaticJsonRPC } from "./hooks";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-
-import Modal from './components/Modal/Modal'
-import ModalEmail from './components/Modal/ModalEmail'
-
+import Modal from "./components/Modal/Modal";
+import ModalEmail from "./components/Modal/ModalEmail";
 
 const auths = require("./auths.json");
 
@@ -55,7 +53,7 @@ const { ethers } = require("ethers");
 const initialNetwork = NETWORKS.rinkeby; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
-const DEBUG = true;
+const DEBUG = false;
 const NETWORKCHECK = true;
 const USE_BURNER_WALLET = false; // toggle burner wallet feature
 const USE_NETWORK_SELECTOR = false;
@@ -178,6 +176,9 @@ function App(props) {
   const connectedUserBalance = useContractReader(readContracts, "Membership", "balanceOf", [
     address || "0x0000000000000000000000000000000000000000",
   ]);
+  const connectedUserClaimed = useContractReader(readContracts, "Membership", "claimed", [
+    address || "0x0000000000000000000000000000000000000000",
+  ]);
 
   console.log({ mintSupply, minted, connectedUserBalance });
 
@@ -255,9 +256,14 @@ function App(props) {
   }, [loadWeb3Modal]);
 
   window.localStorage.setItem("theme", "dark");
-  const disableAllowlistButton = auths[address] === undefined || !allowlistEnabled;
+  const disableAllowlistButton =
+    auths[address] === undefined ||
+    !allowlistEnabled ||
+    connectedUserClaimed >= 1 ||
+    (mintSupply && minted && mintSupply.eq(minted));
 
-  const disablePublicButton = !address || !publicEnabled;
+  const disablePublicButton =
+    !address || !publicEnabled || connectedUserClaimed >= 2 || (mintSupply && minted && mintSupply.eq(minted));
 
   console.log({ disableAllowlistButton, disablePublicButton });
 
@@ -266,16 +272,16 @@ function App(props) {
     bool: false,
   });
 
-    const [modalOpenEmail, setModalOpenEmail] = useState ({
-      bool:false,
-      })
+  const [modalOpenEmail, setModalOpenEmail] = useState({
+    bool: false,
+  });
 
   // API for newsletter
   const baseURL = "https://api-vca-dev-00.azurewebsites.net/entries";
-  const [postResult, setPostResult] = useState(null);
-  const fortmatResponse = res => {
-    return JSON.stringify(res, null, 2);
-  };
+  // const [postResult, setPostResult] = useState(null);
+  // const fortmatResponse = res => {
+  //   return JSON.stringify(res, null, 2);
+  // };
 
   async function postData(address) {
     const postData = {
@@ -297,9 +303,8 @@ function App(props) {
       }
       const data = await res.json();
 
-      console.log(data)
-      setModalOpenEmail({bool:true})
-
+      console.log(data);
+      setModalOpenEmail({ bool: true });
     } catch (err) {
       alert(err.message);
     }
@@ -323,6 +328,7 @@ function App(props) {
         <div className="mint-window">
           <h1>VCA MEMBERSHIP</h1>
           <h2>Mint your membership pass now</h2>
+          {address && <h2>{`${address} is ${auths[address] ? "" : "not "} on the allow list`}</h2>}
           <div className="mint-info">
             <div className="mint-supply">
               <h2>Mint Supply</h2>
@@ -332,6 +338,11 @@ function App(props) {
             <div className="mint-supply-remaining">
               <h2>Remaining Supply</h2>
               <p>{mintSupply && minted ? mintSupply.sub(minted).toString() : "?"}</p>
+            </div>
+
+            <div className="mint-supply-remaining">
+              <h2>Your balance</h2>
+              <p>{connectedUserClaimed ? connectedUserClaimed.toString() : "0"}</p>
             </div>
           </div>
 
@@ -393,53 +404,15 @@ function App(props) {
             </button>
           </div>
 
-          <button className="testModal" onClick={() => setModalOpen({ bool: true })}>
+          {/* <button className="testModal" onClick={() => setModalOpen({ bool: true })}>
             Test Modal
-          </button>
+          </button> */}
         </div>
       </div>
 
-      <div className="desc-proj">
-        <h1>Membership F.A.Q</h1>
-
-        <Container fluid className="faq-container">
-          <Accordion>
-            <Accordion.Item eventKey="0">
-              <Accordion.Header>1. Am I eligible for the mint?</Accordion.Header>
-              <Accordion.Body>List the conditions to meet to be able to mint a vca membership token</Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="1">
-              <Accordion.Header>2. What is the mint price ?</Accordion.Header>
-              <Accordion.Body>Lorem Lipsum</Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="2">
-              <Accordion.Header>3. What are the benefits of holding a VCA membership pass ?</Accordion.Header>
-              <Accordion.Body>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
-                deserunt mollit anim id est laborum.
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="3">
-              <Accordion.Header>4. What are the conditions to get in the allow list ?</Accordion.Header>
-              <Accordion.Body>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
-                deserunt mollit anim id est laborum.
-              </Accordion.Body>
-            </Accordion.Item>
-          </Accordion>
-        </Container>
-      </div>
-
-
       {connectedUserBalance && connectedUserBalance.gt(0) && (
         <div className="register-box">
-          <h3>Join our newsletter</h3>
+          <h3>Register to receive updates on your membership benefits</h3>
 
           <input
             id="register-input"
@@ -453,6 +426,79 @@ function App(props) {
         </div>
       )}
 
+      <div className="desc-proj">
+        <h1>Membership F.A.Q</h1>
+
+        <Container fluid className="faq-container">
+          <Accordion>
+            <Accordion.Item eventKey="0">
+              <Accordion.Header>1. What is VerticalCrypto Art (VCA)?</Accordion.Header>
+              <Accordion.Body>
+                VerticalCrypto Art is a curatorial studio and platform for NFT art & culture. Founded in May of 2020, we
+                curate art, produce exhibitions, have our own auction house supporting Tezos and Ethereum, launched the
+                first ever web3 online residency for artists and work with some of the most well-known projects, brands,
+                artists and partners whilst furthering the web3 art & culture ecosystem through thoughtful curation,
+                content and community.
+              </Accordion.Body>
+            </Accordion.Item>
+            <Accordion.Item eventKey="1">
+              <Accordion.Header>2. What is the VCA Membership Token?</Accordion.Header>
+              <Accordion.Body>
+                The VCA membership token is an entry to the VCA community. Membership includes access to our private
+                Discord, IRL events, early access to auctions & drops, and other exclusive content by the VCA community
+                & beyond.
+              </Accordion.Body>
+            </Accordion.Item>
+            <Accordion.Item eventKey="2">
+              <Accordion.Header>3. How can I claim it?</Accordion.Header>
+              <Accordion.Body>
+                The first claiming period is reserved to a curated list (allowlist) of VCA community members, friends,
+                collectors and supporters. These include our resident artists, mentors, collectors, early supporters,
+                advisors, team, friends, like-minded individuals, pioneers of the NFT community and thought-leaders. The
+                second claiming period will be a public mint for anyone who would like to be a part of the VCA
+                community.
+              </Accordion.Body>
+            </Accordion.Item>
+            <Accordion.Item eventKey="3">
+              <Accordion.Header>4. When can I claim it?</Accordion.Header>
+              <Accordion.Body>
+                Allowlist curated list may claim from Thursday, June 16th at 5 pm BST for 72 hours. Public claiming
+                period will start after the first allowlist period.
+              </Accordion.Body>
+            </Accordion.Item>
+            <Accordion.Item eventKey="4">
+              <Accordion.Header>5. How much will it cost?</Accordion.Header>
+              <Accordion.Body>This is a free mint (+gas cost).</Accordion.Body>
+            </Accordion.Item>
+            <Accordion.Item eventKey="5">
+              <Accordion.Header>6. What is the total supply?</Accordion.Header>
+              <Accordion.Body>The genesis series will be capped at 1000 tokens.</Accordion.Body>
+            </Accordion.Item>
+            <Accordion.Item eventKey="6">
+              <Accordion.Header>7. How many can I mint?</Accordion.Header>
+              <Accordion.Body>
+                Each allowlist address can mint one token. Public mint is limited to 2 tokens per wallet, one token per
+                transaction.
+              </Accordion.Body>
+            </Accordion.Item>
+            <Accordion.Item eventKey="7">
+              <Accordion.Header>8. How long is the membership valid for?</Accordion.Header>
+              <Accordion.Body>
+                The VCA Membership token is valid for a period of one year (1), after the NFTs are first distributed
+                (i.e. the start of the mint).
+              </Accordion.Body>
+            </Accordion.Item>
+            <Accordion.Item eventKey="8">
+              <Accordion.Header>9. How can I access the VCA community?</Accordion.Header>
+              <Accordion.Body>
+                You can access the <a href="https://discord.gg/RRPdeFhaXc">VCA discord server </a>If you prefer to get
+                notified via email you can submit your address in the form above. The email form is visible only after
+                you connect your wallet and you hold a VCA Membership Token.
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
+        </Container>
+      </div>
 
       <div className="footer">
         <p>2022 VCA Membership by VerticalCrypto Art. All Right Reserved.</p>
@@ -465,9 +511,8 @@ function App(props) {
 
       {/* modal */}
 
-      {modalOpen.bool && <Modal setOpenModal={setModalOpen}/>}
-      {modalOpenEmail.bool && <ModalEmail setOpenModal={setModalOpenEmail} emailAddress={emailAddress}/>}
-
+      {modalOpen.bool && <Modal setOpenModal={setModalOpen} />}
+      {modalOpenEmail.bool && <ModalEmail setOpenModal={setModalOpenEmail} emailAddress={emailAddress} />}
 
       {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
 

@@ -5,7 +5,6 @@ function ModalEmail({ setOpenModal, emailAddress }) {
   return (
     <div className="modalBackground">
       <div className="modalContainer">
-       
         <div className="title-modal">
           <h1>Thank You</h1>
         </div>
@@ -13,10 +12,13 @@ function ModalEmail({ setOpenModal, emailAddress }) {
           <p>We have added your email {emailAddress} to our mailing list.</p>
         </div>
         <div className="footer-modal">
-        <button onClick={() => {
+          <button
+            onClick={() => {
               setOpenModal(false);
-            }}>← Go back</button>
-
+            }}
+          >
+            ← Go back
+          </button>
         </div>
       </div>
     </div>

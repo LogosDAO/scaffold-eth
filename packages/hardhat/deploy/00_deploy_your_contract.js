@@ -19,13 +19,13 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   const tx = await deploy("Membership", {
     from: deployer,
     args: [
-      "VCA Membership Rinkeby",
-      "rVCA",
-      "https://vca-dev-nft.s3.amazonaws.com/contract.json",
-      "https://vca-sandbox.s3.amazonaws.com/",
+      "VCA Genesis Membership",
+      "VCAGM",
+      "https://logos.mypinata.cloud/ipfs/QmTXffyTt6TBaogwEKnNNgooU1Jej5XmsUEQEtsracdZqc",
+      "ipfs://QmRKZVCEcLp5PvpUod7izpP12ddFe6hA4i7yR8aKktDsb2/",
       1,
       2,
-      50,
+      1000,
     ],
     log: true,
     waitConfirmations: 5,

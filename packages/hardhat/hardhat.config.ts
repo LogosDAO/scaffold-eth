@@ -9,13 +9,14 @@ import 'dotenv/config'
 
 import 'hardhat-deploy'
 import 'hardhat-gas-reporter'
+import "solidity-coverage";
 
 
 import { task } from 'hardhat/config'
 
-// import './tasks/generate-metadata'
-// import './tasks/generate-allowlist'
-// import './tasks/set-claim-state'
+import './tasks/generate-metadata'
+import './tasks/generate-allowlist'
+import './tasks/set-claim-state'
 
 /*
       📡 This is where you configure your deploy configuration for 🏗 scaffold-eth
