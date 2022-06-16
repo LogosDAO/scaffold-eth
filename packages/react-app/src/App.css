@@ -180,11 +180,13 @@
 .desc-proj {
   width: 80%;
   position: relative;
-  height: 85vh;
+  height: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding-top:15vh!important;
+  padding-bottom:15vh!important;
 }
 
 .desc-proj h1 {
