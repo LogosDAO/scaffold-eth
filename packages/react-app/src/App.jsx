@@ -54,7 +54,7 @@ const { ethers } = require("ethers");
 */
 
 /// 📡 What chain are your contracts deployed to?
-const initialNetwork = NETWORKS.rinkeby; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
+const initialNetwork = NETWORKS.mainnet; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
 const DEBUG = false;
@@ -511,7 +511,7 @@ function App(props) {
       <div className="footer">
         <p>2022 VCA Membership by VerticalCrypto Art. All Right Reserved.</p>
         <div className="socials">
-          <p  onClick={() => setOpenModalToc({ bool: true })}>Terms & Conditions</p>
+          <p onClick={() => setOpenModalToc({ bool: true })}>Terms & Conditions</p>
         </div>
       </div>
 
@@ -519,7 +519,7 @@ function App(props) {
 
       {modalOpen.bool && <Modal setOpenModal={setModalOpen} />}
       {modalOpenEmail.bool && <ModalEmail setOpenModal={setModalOpenEmail} emailAddress={emailAddress} />}
-       
+
       {OpenModalToc.bool && <ModalToc setOpenModalToc={setOpenModalToc} />}
       {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
 
@@ -535,7 +535,6 @@ function App(props) {
         )}
 
         <div className="left-nav">
-
           <img className="logo-vca" src={logoVCA} alt="" />
 
           <div className="area-logo">
@@ -543,11 +542,9 @@ function App(props) {
                 <a href="https://etherscan.io/address/0xf1E654e5cA32Bb4A0878568b2293ed072Fd91805" target="_blank"><img className="logo-etherscan" src={logoEtherscan} alt="" /></a>
                 <a href="https://discord.gg/RRPdeFhaXc" target="_blank"><img className="logo-discord" src={logoDiscord} alt="" /></a>
 
-                
-          </div>
 
+          </div>
         </div>
-        
 
         <Account
           useBurner={USE_BURNER_WALLET}

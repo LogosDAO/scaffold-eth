@@ -28,12 +28,12 @@
 }
 
 .nav-bar .left-nav {
-  display:flex;
-  flex-direction:row;
-  justify-content:space-between;
-  align-items:center;
-  width:100% !important;
-  background:transparent;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100% !important;
+  background: transparent;
 }
 
 .register-box {
@@ -120,7 +120,7 @@
   font-size: calc(0.8vw + 0.3vh + 0.8vmin) !important;
   font-family: "neuebit-bold";
   cursor: pointer;
-  color:#fff;
+  color: #fff;
 }
 
 .mint-window {
@@ -140,7 +140,6 @@
 }
 
 .nav-bar img.logo-vca {
-
   width: 12vw;
   height: auto;
 }
@@ -193,8 +192,8 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding-top:15vh!important;
-  padding-bottom:10vh!important;
+  padding-top: 15vh !important;
+  padding-bottom: 10vh !important;
 }
 
 .desc-proj h1 {
@@ -234,22 +233,22 @@
 }
 
 .area-logo {
-  margin-right:15px !important;
+  margin-right: 15px !important;
 }
 
 .area-logo a {
-  cursor:pointer;
+  cursor: pointer;
 }
 
-.area-logo img{
-  height:auto;
-  width:2.3vh !important;
-  margin:5px !important;
-  max-width:30px;
+.area-logo img {
+  height: auto;
+  width: 2.3vh !important;
+  margin: 5px !important;
+  max-width: 30px;
 }
 
-.area-logo img:nth-child(3){
-  width:2.8vh !important;
+.area-logo img:nth-child(3) {
+  width: 2.8vh !important;
 }
 .mint-info {
   display: flex;
