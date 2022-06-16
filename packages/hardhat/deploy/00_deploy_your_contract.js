@@ -21,7 +21,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     args: [
       "VCA Genesis Membership",
       "VCAGM",
-      "https://logos.mypinata.cloud/ipfs/QmTXffyTt6TBaogwEKnNNgooU1Jej5XmsUEQEtsracdZqc",
+      "https://logos.mypinata.cloud/ipfs/QmXWkeFBet2HMv5szDL4MSP7mxzmo1qsZvdzJfv8iAevXx",
       "ipfs://QmRKZVCEcLp5PvpUod7izpP12ddFe6hA4i7yR8aKktDsb2/",
       1,
       2,
