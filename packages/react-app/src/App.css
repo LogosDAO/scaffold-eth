@@ -107,10 +107,11 @@
   align-items: center;
 }
 
-.socials p {
+.socials p a {
   font-size: calc(0.8vw + 0.3vh + 0.8vmin) !important;
   font-family: "neuebit-bold";
   cursor: pointer;
+  color:#fff;
 }
 
 .mint-window {

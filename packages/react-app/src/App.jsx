@@ -503,7 +503,7 @@ function App(props) {
       <div className="footer">
         <p>2022 VCA Membership by VerticalCrypto Art. All Right Reserved.</p>
         <div className="socials">
-          <p><a>Terms & Conditions</a></p>
+          <p><a href="#">Terms & Conditions</a></p>
         </div>
       </div>
 
@@ -525,6 +525,7 @@ function App(props) {
           </div>
         )}
         <img className="logo-vca" src={logoVCA} alt="" />
+       
         <Account
           useBurner={USE_BURNER_WALLET}
           address={address}
