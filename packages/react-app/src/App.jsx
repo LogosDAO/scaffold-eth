@@ -13,6 +13,9 @@ import "./App.css";
 import "./bootstrap.min.css";
 import heroImage from "./img/header-img-residency-test.png";
 import logoVCA from "./img/logo.svg";
+import logoTwitter from "./img/twitter.svg";
+import logoDiscord from "./img/discord.svg";
+import logoEtherscan from "./img/etherscan.svg";
 import Accordion from "react-bootstrap/Accordion";
 import Container from "react-bootstrap/Container";
 import { Account, FaucetHint, NetworkDisplay, NetworkSwitch } from "./components";
@@ -26,6 +29,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import Modal from "./components/Modal/Modal";
 import ModalEmail from "./components/Modal/ModalEmail";
+import ModalToc from "./components/Modal/ModalToc";
 
 const auths = require("./auths.json");
 
@@ -276,6 +280,10 @@ function App(props) {
     bool: false,
   });
 
+  const [OpenModalToc, setOpenModalToc] = useState({
+    bool: false,
+  });
+
   // API for newsletter
   const baseURL = "https://api-vca-dev-00.azurewebsites.net/entries";
   // const [postResult, setPostResult] = useState(null);
@@ -503,9 +511,7 @@ function App(props) {
       <div className="footer">
         <p>2022 VCA Membership by VerticalCrypto Art. All Right Reserved.</p>
         <div className="socials">
-          <p>OpenSea</p>
-          <p>Etherscan</p>
-          <p>Twitter</p>
+          <p  onClick={() => setOpenModalToc({ bool: true })}>Terms & Conditions</p>
         </div>
       </div>
 
@@ -513,7 +519,8 @@ function App(props) {
 
       {modalOpen.bool && <Modal setOpenModal={setModalOpen} />}
       {modalOpenEmail.bool && <ModalEmail setOpenModal={setModalOpenEmail} emailAddress={emailAddress} />}
-
+       
+      {OpenModalToc.bool && <ModalToc setOpenModalToc={setOpenModalToc} />}
       {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
 
       <div className="nav-bar">
@@ -526,7 +533,22 @@ function App(props) {
             />
           </div>
         )}
-        <img className="logo-vca" src={logoVCA} alt="" />
+
+        <div className="left-nav">
+
+          <img className="logo-vca" src={logoVCA} alt="" />
+
+          <div className="area-logo">
+                <a href="#" target="_blank"><img className="logo-socials" src={logoTwitter} alt="" /></a>
+                <a href="#" target="_blank"><img className="logo-etherscan" src={logoEtherscan} alt="" /></a>
+                <a href="#" target="_blank"><img className="logo-discord" src={logoDiscord} alt="" /></a>
+
+                
+          </div>
+
+        </div>
+        
+
         <Account
           useBurner={USE_BURNER_WALLET}
           address={address}
