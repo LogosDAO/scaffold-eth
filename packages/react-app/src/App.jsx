@@ -503,9 +503,7 @@ function App(props) {
       <div className="footer">
         <p>2022 VCA Membership by VerticalCrypto Art. All Right Reserved.</p>
         <div className="socials">
-          <p>OpenSea</p>
-          <p>Etherscan</p>
-          <p>Twitter</p>
+          <p><a>Terms & Conditions</a></p>
         </div>
       </div>
 
