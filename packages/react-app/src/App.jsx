@@ -511,7 +511,7 @@ function App(props) {
       <div className="footer">
         <p>2022 VCA Membership by VerticalCrypto Art. All Right Reserved.</p>
         <div className="socials">
-          <p  onClick={() => setOpenModalToc({ bool: true })}>Terms & Conditions</p>
+          <p onClick={() => setOpenModalToc({ bool: true })}>Terms & Conditions</p>
         </div>
       </div>
 
@@ -519,7 +519,7 @@ function App(props) {
 
       {modalOpen.bool && <Modal setOpenModal={setModalOpen} />}
       {modalOpenEmail.bool && <ModalEmail setOpenModal={setModalOpenEmail} emailAddress={emailAddress} />}
-       
+
       {OpenModalToc.bool && <ModalToc setOpenModalToc={setOpenModalToc} />}
       {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
 
@@ -535,19 +535,20 @@ function App(props) {
         )}
 
         <div className="left-nav">
-
           <img className="logo-vca" src={logoVCA} alt="" />
 
           <div className="area-logo">
-                <a href="#" target="_blank"><img className="logo-socials" src={logoTwitter} alt="" /></a>
-                <a href="#" target="_blank"><img className="logo-etherscan" src={logoEtherscan} alt="" /></a>
-                <a href="#" target="_blank"><img className="logo-discord" src={logoDiscord} alt="" /></a>
-
-                
+            <a href="#" target="_blank">
+              <img className="logo-socials" src={logoTwitter} alt="" />
+            </a>
+            <a href="#" target="_blank">
+              <img className="logo-etherscan" src={logoEtherscan} alt="" />
+            </a>
+            <a href="#" target="_blank">
+              <img className="logo-discord" src={logoDiscord} alt="" />
+            </a>
           </div>
-
         </div>
-        
 
         <Account
           useBurner={USE_BURNER_WALLET}
