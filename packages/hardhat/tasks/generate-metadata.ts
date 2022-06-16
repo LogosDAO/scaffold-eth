@@ -16,7 +16,7 @@ task('generate-metadata', 'Generate metadata files')
             const tokenId = parseInt(taskArgs.start) + index
             const metadata = {
                 name: 'VCA Genesis Membership',
-                description: 'VCA Genesis Membership',
+                description: 'VerticalCrypto Art genesis community access token. Members include our resident artists, mentors, collectors, early supporters, advisors, team, friends, like-minded individuals, pioneers of the NFT community and thought-leaders.',
                 image: 'ipfs://QmSNgXwdHQ1SwHK42TEaLZM8zVV9zjZxNu3zzcc7Zk7rNr',
                 animation_url: 'ipfs://QmYJxtY5jLsS2mrEjYt6Wv99p5XB2PNTsGZvdgEnp87Q2s',
                 external_url: 'https://vcamembership.verticalcrypto.art/',
