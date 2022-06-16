@@ -237,6 +237,10 @@
   margin-right:15px !important;
 }
 
+.area-logo a {
+  cursor:pointer;
+}
+
 .area-logo img{
   height:auto;
   width:2.3vh !important;

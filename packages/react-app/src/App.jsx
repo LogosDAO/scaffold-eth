@@ -533,9 +533,9 @@ function App(props) {
           <img className="logo-vca" src={logoVCA} alt="" />
 
           <div className="area-logo">
-                <img className="logo-socials" src={logoTwitter} alt="" />
-                <img className="logo-etherscan" src={logoEtherscan} alt="" />
-                <img className="logo-discord" src={logoDiscord} alt="" />
+                <a href="#" target="_blank"><img className="logo-socials" src={logoTwitter} alt="" /></a>
+                <a href="#" target="_blank"><img className="logo-etherscan" src={logoEtherscan} alt="" /></a>
+                <a href="#" target="_blank"><img className="logo-discord" src={logoDiscord} alt="" /></a>
 
                 
           </div>
