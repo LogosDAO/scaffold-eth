@@ -538,11 +538,15 @@ function App(props) {
           <img className="logo-vca" src={logoVCA} alt="" />
 
           <div className="area-logo">
-                <a href="https://twitter.com/verticalcrypto" target="_blank"><img className="logo-socials" src={logoTwitter} alt="" /></a>
-                <a href="https://etherscan.io/address/0xf1E654e5cA32Bb4A0878568b2293ed072Fd91805" target="_blank"><img className="logo-etherscan" src={logoEtherscan} alt="" /></a>
-                <a href="https://discord.gg/RRPdeFhaXc" target="_blank"><img className="logo-discord" src={logoDiscord} alt="" /></a>
-
-
+            <a href="https://twitter.com/verticalcrypto" target="_blank">
+              <img className="logo-socials" src={logoTwitter} alt="" />
+            </a>
+            <a href="https://etherscan.io/address/0xf1E654e5cA32Bb4A0878568b2293ed072Fd91805" target="_blank">
+              <img className="logo-etherscan" src={logoEtherscan} alt="" />
+            </a>
+            <a href="https://discord.gg/RRPdeFhaXc" target="_blank">
+              <img className="logo-discord" src={logoDiscord} alt="" />
+            </a>
           </div>
         </div>
 
