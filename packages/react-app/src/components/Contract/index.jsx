@@ -65,8 +65,6 @@ export default function Contract({
     contract = customContract;
   }
 
-  console.log({ contract });
-
   const address = contract ? contract.address : "";
   const contractIsDeployed = useContractExistsAtAddress(provider, address);
 
@@ -123,7 +121,7 @@ export default function Contract({
           <div style={{ fontSize: 24 }}>
             {name}
             <div style={{ float: "right" }}>
-              <Address value={address} />
+              <Address value={address} blockExplorer={blockExplorer} />
               <Balance address={address} provider={provider} price={price} />
             </div>
           </div>

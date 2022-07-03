@@ -1,3 +1,4 @@
+import { Button, Col, Menu, Row, Input, Divider, List } from "antd";
 import "antd/dist/antd.css";
 import {
   useBalance,
@@ -9,29 +10,36 @@ import {
 } from "eth-hooks";
 import { useExchangeEthPrice } from "eth-hooks/dapps/dex";
 import React, { useCallback, useEffect, useState } from "react";
+import { Link, Route, Switch, useLocation } from "react-router-dom";
 import "./App.css";
-import "./bootstrap.min.css";
-import heroImage from "./img/header-img-residency-test.png";
-import logoVCA from "./img/logo.svg";
-import logoTwitter from "./img/twitter.svg";
-import logoDiscord from "./img/discord.svg";
-import logoEtherscan from "./img/etherscan.svg";
-import Accordion from "react-bootstrap/Accordion";
-import Container from "react-bootstrap/Container";
-import { Account, FaucetHint, NetworkDisplay, NetworkSwitch } from "./components";
-import { ALCHEMY_KEY, NETWORKS } from "./constants";
+import {
+  Account,
+  Contract,
+  Address,
+  Faucet,
+  GasGauge,
+  Header,
+  Ramp,
+  ThemeSwitch,
+  NetworkDisplay,
+  FaucetHint,
+  NetworkSwitch,
+  AddressInput,
+  EtherInput,
+  BytesStringInput,
+} from "./components";
+import { NETWORKS, ALCHEMY_KEY } from "./constants";
 import externalContracts from "./contracts/external_contracts";
+import GnosisSafeABI from "./contracts/gnosisSafe";
+import MultisendABI from "./contracts/multisend";
 // contracts
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
+import { Home, ExampleUI, Hints, Subgraph } from "./views";
 import { useStaticJsonRPC } from "./hooks";
-import "bootstrap/dist/css/bootstrap.min.css";
+import { ZERO_ADDRESS } from "./components/Swap";
 
-import Modal from "./components/Modal/Modal";
-import ModalEmail from "./components/Modal/ModalEmail";
-import ModalToc from "./components/Modal/ModalToc";
-
-const auths = require("./auths.json");
+import { safeSignTypedData, encodeMultiSend, MetaTransaction } from "@gnosis.pm/safe-contracts";
 
 const { ethers } = require("ethers");
 /*
@@ -57,7 +65,7 @@ const { ethers } = require("ethers");
 const initialNetwork = NETWORKS.mainnet; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
-const DEBUG = false;
+const DEBUG = true;
 const NETWORKCHECK = true;
 const USE_BURNER_WALLET = false; // toggle burner wallet feature
 const USE_NETWORK_SELECTOR = false;
@@ -71,16 +79,101 @@ const providers = [
   "https://rpc.scaffoldeth.io:48544",
 ];
 
-function App(props) {
-  const [emailAddress, setEmailAddress] = useState("");
+const encodeMultiAction = (multisend, metatransactions) => {
+  console.log({metatransactions})
+  const encodedMetatransactions = encodeMultiSend(metatransactions)
+  const multi_action = multisend.interface.encodeFunctionData('multiSend', [encodedMetatransactions])
+  return multi_action
+}
 
+function App(props) {
   // specify all the chains your app is available on. Eg: ['localhost', 'mainnet', ...otherNetworks ]
   // reference './constants.js' for other networks
   const networkOptions = [initialNetwork.name, "mainnet", "rinkeby"];
 
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
+  const [toAddress, setToAddress] = useState();
+  const [gnosisAddress, setGnosisAddress] = useState();
+  const [txData, setTxData] = useState();
+  const [txs, setTxs] = useState([]);
+  const [txValue, setTxValue] = useState();
+  const [signatures, setSignatures] = useState([]);
+  const [encodedTx, setEncodedTx] = useState();
+  const [txHash, setTxHash] = useState();
+  const [tipValue, setTipValue] = useState();
   const [selectedNetwork, setSelectedNetwork] = useState(networkOptions[0]);
+  const location = useLocation();
+
+  const addTx = async () => {
+    const newTxs = [...txs];
+    newTxs.push({
+      to: toAddress,
+      data: txData,
+      value: txValue,
+      operation: 0
+    });
+    console.log({newTxs})
+    setTxs(newTxs);
+  };
+
+  const createAndSign = async () => {
+    const gnosisAddressChecksum = ethers.utils.getAddress(gnosisAddress);
+    const toAddressChecksum = ethers.utils.getAddress(toAddress);
+    console.log({ gnosisAddress, gnosisAddressChecksum, toAddress, toAddressChecksum });
+    try {
+      const multisendContract = new ethers.Contract('0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761', MultisendABI, localProvider);
+      const gnosisSafe = new ethers.Contract(gnosisAddressChecksum, GnosisSafeABI, localProvider);
+      
+      const multisendAction = encodeMultiAction(multisendContract, txs)
+      
+      console.log({multisendAction})
+
+      const encoded = await gnosisSafe.callStatic.encodeTransactionData(
+        multisendContract.address,
+        0,
+        multisendAction,
+        1,
+        0,
+        0,
+        0,
+        ZERO_ADDRESS,
+        ZERO_ADDRESS,
+        1,
+      );
+      setEncodedTx(encoded);
+      const newTxHash = await gnosisSafe.callStatic.getTransactionHash(
+        multisendContract.address,
+        0,
+        multisendAction,
+        1,
+        0,
+        0,
+        0,
+        ZERO_ADDRESS,
+        ZERO_ADDRESS,
+        1,
+      );
+      setTxHash(txHash);
+      console.log({ encoded, newTxHash });
+      const signed = await safeSignTypedData(userSigner, gnosisSafe, {
+        to: multisendContract.address,
+        value: 0,
+        data: multisendAction,
+        operation: 1,
+        safeTxGas: 0,
+        baseGas: 0,
+        gasPrice: 0,
+        gasToken: ZERO_ADDRESS,
+        refundReceiver: ZERO_ADDRESS,
+        nonce: 1,
+      });
+      setSignatures(signatures.push(signed));
+      console.log({ signed });
+    } catch (error) {
+      console.log({ error });
+    }
+  };
 
   const targetNetwork = NETWORKS[selectedNetwork];
 
@@ -153,9 +246,6 @@ function App(props) {
   // If you want to make 🔐 write transactions to your contracts, use the userSigner:
   const writeContracts = useContractLoader(userSigner, contractConfig, localChainId);
 
-  console.log({ contractConfig });
-  console.log({ writeContracts });
-
   // EXTERNAL CONTRACT EXAMPLE:
   //
   // If you want to bring in the mainnet DAI contract it would look like:
@@ -172,19 +262,7 @@ function App(props) {
   ]);
 
   // keep track of a variable from the contract in the local React state:
-
-  const publicEnabled = useContractReader(readContracts, "Membership", "publicEnabled");
-  const allowlistEnabled = useContractReader(readContracts, "Membership", "allowlistEnabled");
-  const mintSupply = useContractReader(readContracts, "Membership", "maxSupply");
-  const minted = useContractReader(readContracts, "Membership", "totalSupply");
-  const connectedUserBalance = useContractReader(readContracts, "Membership", "balanceOf", [
-    address || "0x0000000000000000000000000000000000000000",
-  ]);
-  const connectedUserClaimed = useContractReader(readContracts, "Membership", "claimed", [
-    address || "0x0000000000000000000000000000000000000000",
-  ]);
-
-  console.log({ mintSupply, minted, connectedUserBalance });
+  const purpose = useContractReader(readContracts, "YourContract", "purpose");
 
   /*
   const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
@@ -259,68 +337,42 @@ function App(props) {
     }
   }, [loadWeb3Modal]);
 
-  window.localStorage.setItem("theme", "dark");
-  const disableAllowlistButton =
-    auths[address] === undefined ||
-    !allowlistEnabled ||
-    connectedUserClaimed >= 1 ||
-    (mintSupply && minted && mintSupply.eq(minted));
-
-  const disablePublicButton =
-    !address || !publicEnabled || connectedUserClaimed >= 2 || (mintSupply && minted && mintSupply.eq(minted));
-
-  console.log({ disableAllowlistButton, disablePublicButton });
-
-  // Modal
-  const [modalOpen, setModalOpen] = useState({
-    bool: false,
-  });
-
-  const [modalOpenEmail, setModalOpenEmail] = useState({
-    bool: false,
-  });
-
-  const [OpenModalToc, setOpenModalToc] = useState({
-    bool: false,
-  });
-
-  // API for newsletter
-  const baseURL = "https://api-vca-dev-00.azurewebsites.net/entries";
-  // const [postResult, setPostResult] = useState(null);
-  // const fortmatResponse = res => {
-  //   return JSON.stringify(res, null, 2);
-  // };
-
-  async function postData(address) {
-    const postData = {
-      walletId: address,
-      emailAddress: emailAddress,
-    };
-
-    try {
-      const res = await fetch(`${baseURL}`, {
-        method: "post",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(postData),
-      });
-      if (!res.ok) {
-        const message = `An error has occured: ${res.status} - ${res.statusText}`;
-        alert(message);
-      }
-      const data = await res.json();
-
-      console.log(data);
-      setModalOpenEmail({ bool: true });
-    } catch (err) {
-      alert(err.message);
-    }
-  }
+  const faucetAvailable = localProvider && localProvider.connection && targetNetwork.name.indexOf("local") !== -1;
 
   return (
     <div className="App">
       {/* ✏️ Edit the header and change the title to your project name */}
+      <Header>
+        {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
+        <div style={{ position: "relative", display: "flex", flexDirection: "column" }}>
+          <div style={{ display: "flex", flex: 1 }}>
+            {USE_NETWORK_SELECTOR && (
+              <div style={{ marginRight: 20 }}>
+                <NetworkSwitch
+                  networkOptions={networkOptions}
+                  selectedNetwork={selectedNetwork}
+                  setSelectedNetwork={setSelectedNetwork}
+                />
+              </div>
+            )}
+            <Account
+              useBurner={USE_BURNER_WALLET}
+              address={address}
+              localProvider={localProvider}
+              userSigner={userSigner}
+              mainnetProvider={mainnetProvider}
+              price={price}
+              web3Modal={web3Modal}
+              loadWeb3Modal={loadWeb3Modal}
+              logoutOfWeb3Modal={logoutOfWeb3Modal}
+              blockExplorer={blockExplorer}
+            />
+          </div>
+        </div>
+      </Header>
+      {yourLocalBalance.lte(ethers.BigNumber.from("0")) && (
+        <FaucetHint localProvider={localProvider} targetNetwork={targetNetwork} address={address} />
+      )}
       <NetworkDisplay
         NETWORKCHECK={NETWORKCHECK}
         localChainId={localChainId}
@@ -329,243 +381,216 @@ function App(props) {
         logoutOfWeb3Modal={logoutOfWeb3Modal}
         USE_NETWORK_SELECTOR={USE_NETWORK_SELECTOR}
       />
+      <Menu style={{ textAlign: "center", marginTop: 20 }} selectedKeys={[location.pathname]} mode="horizontal">
+        <Menu.Item key="/">
+          <Link to="/">App Home</Link>
+        </Menu.Item>
+        <Menu.Item key="/home">
+          <Link to="/home">Home</Link>
+        </Menu.Item>
+        <Menu.Item key="/debug">
+          <Link to="/debug">Debug Contracts</Link>
+        </Menu.Item>
+        <Menu.Item key="/hints">
+          <Link to="/hints">Hints</Link>
+        </Menu.Item>
+        <Menu.Item key="/exampleui">
+          <Link to="/exampleui">ExampleUI</Link>
+        </Menu.Item>
+        <Menu.Item key="/mainnetdai">
+          <Link to="/mainnetdai">Mainnet DAI</Link>
+        </Menu.Item>
+        <Menu.Item key="/subgraph">
+          <Link to="/subgraph">Subgraph</Link>
+        </Menu.Item>
+      </Menu>
 
-      <div className="viewport-header">
-        <img className="bg-vid" src={heroImage} alt="" />
-
-        <div className="mint-window">
-          <h1>VCA MEMBERSHIP</h1>
-          <h2>Mint your membership pass now</h2>
-          {address && <h2>{`${address} is ${auths[address] ? "" : "not "} on the allow list`}</h2>}
-          <div className="mint-info">
-            <div className="mint-supply">
-              <h2>Mint Supply</h2>
-              <p>{mintSupply ? mintSupply.toString() : "?"}</p>
+      <Switch>
+        <Route exact path="/">
+          {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
+          <div>
+            {/*
+        ⚙️ Here is an example UI that displays and sets the purpose in your smart contract:
+      */}
+            <div style={{ border: "1px solid #cccccc", padding: 16, width: 400, margin: "auto", marginTop: 64 }}>
+              <h2>Tx Builder:</h2>
+              <Divider />
+              <div style={{ margin: 8 }}></div>
+              Gnosis Safe
+              <AddressInput onChange={setGnosisAddress} value={gnosisAddress}></AddressInput>
+              <Divider />
+              To
+              <AddressInput onChange={setToAddress} value={toAddress}></AddressInput>
+              Data
+              <Input onChange={e => setTxData(e.target.value)} value={txData}></Input>
+              Value
+              <EtherInput onChange={setTxValue} value={txValue} price={price}></EtherInput>
+              <Divider />
+              <Button
+                onClick={() => {
+                  /* look how we call setPurpose AND send some value along */
+                  addTx();
+                  /* this will fail until you make the setPurpose function payable */
+                }}
+              >
+                Add transaction
+              </Button>
+              <Divider />
+              Tip
+              <EtherInput onChange={setTipValue} value={tipValue} price={price}></EtherInput>
+              <Divider />
+              <Button
+                onClick={() => {
+                  /* look how we call setPurpose AND send some value along */
+                  createAndSign();
+                  /* this will fail until you make the setPurpose function payable */
+                }}
+              >
+                Sign transactions
+              </Button>
+              <Button
+                onClick={() => {
+                  /* look how we call setPurpose AND send some value along */
+                  createAndSign();
+                  /* this will fail until you make the setPurpose function payable */
+                }}
+              >
+                Save transactions
+              </Button>
             </div>
-
-            <div className="mint-supply-remaining">
-              <h2>Remaining Supply</h2>
-              <p>{mintSupply && minted ? mintSupply.sub(minted).toString() : "?"}</p>
-            </div>
-
-            <div className="mint-supply-remaining">
-              <h2>Your balance</h2>
-              <p>{connectedUserClaimed ? connectedUserClaimed.toString() : "0"}</p>
+            <div style={{ width: 600, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
+              <h2>Txs:</h2>
+              <List
+                bordered
+                dataSource={txs}
+                renderItem={item => {
+                  return (
+                    <List.Item key={(Math.random() + 1).toString(36).substring(7)}>
+                      <Address address={item.to} ensProvider={mainnetProvider} fontSize={16} />
+                      {item.data.slice(0, 15)}...
+                    </List.Item>
+                  );
+                }}
+              />
             </div>
           </div>
+        </Route>
+        <Route exact path="/home">
+          {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
+          <Home yourLocalBalance={yourLocalBalance} readContracts={readContracts} />
+        </Route>
+        <Route exact path="/debug">
+          {/*
+                🎛 this scaffolding is full of commonly used components
+                this <Contract/> component will automatically parse your ABI
+                and give you a form to interact with it locally
+            */}
 
-          <div className="mint-btns">
-            <button
-              disabled={disablePublicButton}
-              onClick={async () => {
-                /* look how you call setPurpose on your contract: */
-                /* notice how you pass a call back for tx updates too */
-                const result = tx(writeContracts.Membership.mintPublic(1), update => {
-                  console.log("📡 Transaction Update:", update);
-                  if (update && (update.status === "confirmed" || update.status === 1)) {
-                    console.log(" 🍾 Transaction " + update.hash + " finished!");
-                    console.log(
-                      " ⛽️ " +
-                        update.gasUsed +
-                        "/" +
-                        (update.gasLimit || update.gas) +
-                        " @ " +
-                        parseFloat(update.gasPrice) / 1000000000 +
-                        " gwei",
-                    );
-                  }
-                });
-                console.log("awaiting metamask/web3 confirm result...", result);
-                console.log(await result);
-              }}
-            >
-              Mint public!
-            </button>
-            <button
-              disabled={disableAllowlistButton}
-              onClick={async () => {
-                /* look how you call setPurpose on your contract: */
-                /* notice how you pass a call back for tx updates too */
-                const result = tx(
-                  writeContracts.Membership.mintAllowList(1, auths[address].nonce, auths[address].signature),
-                  update => {
-                    console.log("📡 Transaction Update:", update);
-                    if (update && (update.status === "confirmed" || update.status === 1)) {
-                      console.log(" 🍾 Transaction " + update.hash + " finished!");
-                      console.log(
-                        " ⛽️ " +
-                          update.gasUsed +
-                          "/" +
-                          (update.gasLimit || update.gas) +
-                          " @ " +
-                          parseFloat(update.gasPrice) / 1000000000 +
-                          " gwei",
-                      );
-                    }
-                  },
-                );
-                console.log("awaiting metamask/web3 confirm result...", result);
-                console.log(await result);
-              }}
-            >
-              Mint allow list!
-            </button>
-          </div>
-
-          {/* <button className="testModal" onClick={() => setModalOpen({ bool: true })}>
-            Test Modal
-          </button> */}
-        </div>
-      </div>
-
-      {connectedUserBalance && connectedUserBalance.gt(0) && (
-        <div className="register-box">
-          <h3>Register to receive updates on your membership benefits</h3>
-
-          <input
-            id="register-input"
-            type="text"
-            required
-            placeholder="your email@email.com"
-            value={emailAddress}
-            onChange={e => setEmailAddress(e.target.value)}
+          <Contract
+            name="YourContract"
+            price={price}
+            signer={userSigner}
+            provider={localProvider}
+            address={address}
+            blockExplorer={blockExplorer}
+            contractConfig={contractConfig}
           />
-          <button onClick={() => postData(address)}>Submit</button>
-        </div>
-      )}
-
-      <div className="desc-proj">
-        <h1>Membership F.A.Q</h1>
-
-        <Container fluid className="faq-container">
-          <Accordion>
-            <Accordion.Item eventKey="0">
-              <Accordion.Header>1. What is VerticalCrypto Art (VCA)?</Accordion.Header>
-              <Accordion.Body>
-                VerticalCrypto Art is a curatorial studio and platform for NFT art & culture. Founded in May of 2020, we
-                curate art, produce exhibitions, have our own auction house supporting Tezos and Ethereum, launched the
-                first ever web3 online residency for artists and work with some of the most well-known projects, brands,
-                artists and partners whilst furthering the web3 art & culture ecosystem through thoughtful curation,
-                content and community.
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="1">
-              <Accordion.Header>2. What is the VCA Membership Token?</Accordion.Header>
-              <Accordion.Body>
-                The VCA membership token is an entry to the VCA community. Membership includes access to our private
-                Discord, IRL events, early access to auctions & drops, and other exclusive content by the VCA community
-                & beyond.
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="2">
-              <Accordion.Header>3. How can I claim it?</Accordion.Header>
-              <Accordion.Body>
-                The first claiming period is reserved to a curated list (allowlist) of VCA community members, friends,
-                collectors and supporters. These include our resident artists, mentors, collectors, early supporters,
-                advisors, team, friends, like-minded individuals, pioneers of the NFT community and thought-leaders. The
-                second claiming period will be a public mint for anyone who would like to be a part of the VCA
-                community.
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="3">
-              <Accordion.Header>4. When can I claim it?</Accordion.Header>
-              <Accordion.Body>
-                Allowlist curated list may claim from Thursday, June 16th at 5 pm BST for 72 hours. Public claiming
-                period will start after the first allowlist period.
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="4">
-              <Accordion.Header>5. How much will it cost?</Accordion.Header>
-              <Accordion.Body>This is a free mint (+gas cost).</Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="5">
-              <Accordion.Header>6. What is the total supply?</Accordion.Header>
-              <Accordion.Body>The genesis series will be capped at 1000 tokens.</Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="6">
-              <Accordion.Header>7. How many can I mint?</Accordion.Header>
-              <Accordion.Body>
-                Each allowlist address can mint one token. Public mint is limited to 2 tokens per wallet, one token per
-                transaction.
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="7">
-              <Accordion.Header>8. How long is the membership valid for?</Accordion.Header>
-              <Accordion.Body>
-                The VCA Membership token is valid for a period of one year (1), after the NFTs are first distributed
-                (i.e. the start of the mint).
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="8">
-              <Accordion.Header>9. How can I access the VCA community?</Accordion.Header>
-              <Accordion.Body>
-                You can access the <a href="https://discord.gg/RRPdeFhaXc">VCA discord server </a>If you prefer to get
-                notified via email you can submit your address in the form above. The email form is visible only after
-                you connect your wallet and you hold a VCA Membership Token.
-              </Accordion.Body>
-            </Accordion.Item>
-          </Accordion>
-        </Container>
-      </div>
-
-      <div className="footer">
-        <p>2022 VCA Membership by VerticalCrypto Art. All Right Reserved.</p>
-        <div className="socials">
-          <p onClick={() => setOpenModalToc({ bool: true })}>Terms & Conditions</p>
-        </div>
-      </div>
-
-      {/* modal */}
-
-      {modalOpen.bool && <Modal setOpenModal={setModalOpen} />}
-      {modalOpenEmail.bool && <ModalEmail setOpenModal={setModalOpenEmail} emailAddress={emailAddress} />}
-
-      {OpenModalToc.bool && <ModalToc setOpenModalToc={setOpenModalToc} />}
-      {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
-
-      <div className="nav-bar">
-        {USE_NETWORK_SELECTOR && (
-          <div style={{ marginRight: 20 }}>
-            <NetworkSwitch
-              networkOptions={networkOptions}
-              selectedNetwork={selectedNetwork}
-              setSelectedNetwork={setSelectedNetwork}
+        </Route>
+        <Route path="/hints">
+          <Hints
+            address={address}
+            yourLocalBalance={yourLocalBalance}
+            mainnetProvider={mainnetProvider}
+            price={price}
+          />
+        </Route>
+        <Route path="/exampleui">
+          <ExampleUI
+            address={address}
+            userSigner={userSigner}
+            mainnetProvider={mainnetProvider}
+            localProvider={localProvider}
+            yourLocalBalance={yourLocalBalance}
+            price={price}
+            tx={tx}
+            writeContracts={writeContracts}
+            readContracts={readContracts}
+            purpose={purpose}
+          />
+        </Route>
+        <Route path="/mainnetdai">
+          <Contract
+            name="DAI"
+            customContract={mainnetContracts && mainnetContracts.contracts && mainnetContracts.contracts.DAI}
+            signer={userSigner}
+            provider={mainnetProvider}
+            address={address}
+            blockExplorer="https://etherscan.io/"
+            contractConfig={contractConfig}
+            chainId={1}
+          />
+          {/*
+            <Contract
+              name="UNI"
+              customContract={mainnetContracts && mainnetContracts.contracts && mainnetContracts.contracts.UNI}
+              signer={userSigner}
+              provider={mainnetProvider}
+              address={address}
+              blockExplorer="https://etherscan.io/"
             />
-          </div>
-        )}
+            */}
+        </Route>
+        <Route path="/subgraph">
+          <Subgraph
+            subgraphUri={props.subgraphUri}
+            tx={tx}
+            writeContracts={writeContracts}
+            mainnetProvider={mainnetProvider}
+          />
+        </Route>
+      </Switch>
 
-        <div className="left-nav">
-          <img className="logo-vca" src={logoVCA} alt="" />
+      <ThemeSwitch />
 
-          <div className="area-logo">
-            <a href="https://twitter.com/verticalcrypto" target="_blank">
-              <img className="logo-socials" src={logoTwitter} alt="" />
-            </a>
-            <a href="https://etherscan.io/address/0xf1E654e5cA32Bb4A0878568b2293ed072Fd91805" target="_blank">
-              <img className="logo-etherscan" src={logoEtherscan} alt="" />
-            </a>
-            <a href="https://discord.gg/RRPdeFhaXc" target="_blank">
-              <img className="logo-discord" src={logoDiscord} alt="" />
-            </a>
-          </div>
-        </div>
+      {/* 🗺 Extra UI like gas price, eth price, faucet, and support: */}
+      <div style={{ position: "fixed", textAlign: "left", left: 0, bottom: 20, padding: 10 }}>
+        <Row align="middle" gutter={[4, 4]}>
+          <Col span={8}>
+            <Ramp price={price} address={address} networks={NETWORKS} />
+          </Col>
 
-        <Account
-          useBurner={USE_BURNER_WALLET}
-          address={address}
-          localProvider={localProvider}
-          userSigner={userSigner}
-          mainnetProvider={mainnetProvider}
-          price={price}
-          web3Modal={web3Modal}
-          loadWeb3Modal={loadWeb3Modal}
-          logoutOfWeb3Modal={logoutOfWeb3Modal}
-          blockExplorer={blockExplorer}
-        />
+          <Col span={8} style={{ textAlign: "center", opacity: 0.8 }}>
+            <GasGauge gasPrice={gasPrice} />
+          </Col>
+          <Col span={8} style={{ textAlign: "center", opacity: 1 }}>
+            <Button
+              onClick={() => {
+                window.open("https://t.me/joinchat/KByvmRe5wkR-8F_zz6AjpA");
+              }}
+              size="large"
+              shape="round"
+            >
+              <span style={{ marginRight: 8 }} role="img" aria-label="support">
+                💬
+              </span>
+              Support
+            </Button>
+          </Col>
+        </Row>
+
+        <Row align="middle" gutter={[4, 4]}>
+          <Col span={24}>
+            {
+              /*  if the local provider has a signer, let's show the faucet:  */
+              faucetAvailable ? (
+                <Faucet localProvider={localProvider} price={price} ensProvider={mainnetProvider} />
+              ) : (
+                ""
+              )
+            }
+          </Col>
+        </Row>
       </div>
-      {yourLocalBalance.lte(ethers.BigNumber.from("0")) && (
-        <FaucetHint localProvider={localProvider} targetNetwork={targetNetwork} address={address} />
-      )}
     </div>
   );
 }

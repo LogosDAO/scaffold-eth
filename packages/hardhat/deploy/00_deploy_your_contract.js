@@ -16,16 +16,9 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const tx = await deploy("Membership", {
+  const tx = await deploy("TipRelayer", {
     from: deployer,
     args: [
-      "VCA Genesis Membership",
-      "VCAGM",
-      "https://logos.mypinata.cloud/ipfs/QmXWkeFBet2HMv5szDL4MSP7mxzmo1qsZvdzJfv8iAevXx",
-      "ipfs://QmRKZVCEcLp5PvpUod7izpP12ddFe6hA4i7yR8aKktDsb2/",
-      1,
-      2,
-      1000,
     ],
     log: true,
     waitConfirmations: 5,
@@ -81,4 +74,4 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   //   console.error(error);
   // }
 };
-module.exports.tags = ["Membership"];
+module.exports.tags = ["Relayer"];
