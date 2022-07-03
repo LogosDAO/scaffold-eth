@@ -14,9 +14,8 @@ import "solidity-coverage";
 
 import { task } from 'hardhat/config'
 
-import './tasks/generate-metadata'
-import './tasks/generate-allowlist'
-import './tasks/set-claim-state'
+import './tasks/deploy-relay'
+import './tasks/deploy-db'
 
 /*
       📡 This is where you configure your deploy configuration for 🏗 scaffold-eth
@@ -263,7 +262,7 @@ module.exports = {
     solidity: {
         compilers: [
             {
-                version: '0.8.13',
+                version: '0.8.15',
                 settings: {
                     optimizer: {
                         enabled: true,

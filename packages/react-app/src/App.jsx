@@ -32,6 +32,8 @@ import { NETWORKS, ALCHEMY_KEY } from "./constants";
 import externalContracts from "./contracts/external_contracts";
 import GnosisSafeABI from "./contracts/gnosisSafe";
 import MultisendABI from "./contracts/multisend";
+import TipRelayerABI from "./contracts/relayer";
+import SignatureDbABI from "./contracts/signaturedb";
 // contracts
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
@@ -62,7 +64,7 @@ const { ethers } = require("ethers");
 */
 
 /// 📡 What chain are your contracts deployed to?
-const initialNetwork = NETWORKS.mainnet; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
+const initialNetwork = NETWORKS.rinkeby; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
 const DEBUG = true;
@@ -80,11 +82,11 @@ const providers = [
 ];
 
 const encodeMultiAction = (multisend, metatransactions) => {
-  console.log({metatransactions})
-  const encodedMetatransactions = encodeMultiSend(metatransactions)
-  const multi_action = multisend.interface.encodeFunctionData('multiSend', [encodedMetatransactions])
-  return multi_action
-}
+  console.log({ metatransactions });
+  const encodedMetatransactions = encodeMultiSend(metatransactions);
+  const multi_action = multisend.interface.encodeFunctionData("multiSend", [encodedMetatransactions]);
+  return multi_action;
+};
 
 function App(props) {
   // specify all the chains your app is available on. Eg: ['localhost', 'mainnet', ...otherNetworks ]
@@ -96,6 +98,7 @@ function App(props) {
   const [toAddress, setToAddress] = useState();
   const [gnosisAddress, setGnosisAddress] = useState();
   const [txData, setTxData] = useState();
+  const [txComment, setTxComment] = useState();
   const [txs, setTxs] = useState([]);
   const [txValue, setTxValue] = useState();
   const [signatures, setSignatures] = useState([]);
@@ -111,10 +114,50 @@ function App(props) {
       to: toAddress,
       data: txData,
       value: txValue,
-      operation: 0
+      operation: 0,
     });
-    console.log({newTxs})
+    console.log({ newTxs });
     setTxs(newTxs);
+  };
+
+  const encodeTransaction = (
+    to,
+    value,
+    data,
+    operation,
+    safeTxGas,
+    baseGas,
+    gasPrice,
+    gasToken,
+    refundReceiver,
+    nonce,
+    comment,
+  ) => {
+    return ethers.utils.defaultAbiCoder.encode(
+      [
+        "address",
+        "uint256",
+        "bytes",
+        "uint256",
+        "uint256",
+        "uint256",
+        "uint256",
+        "address",
+        "address",
+        "uint256",
+        "string",
+      ],
+      [to, value, data, operation, safeTxGas, baseGas, gasPrice, gasToken, refundReceiver, nonce, comment],
+    );
+  };
+
+  const submitSignature = async () => {
+    try {
+      console.log({ gnosisAddress, txHash, encodedTx, signatures });
+      await writeContracts.SignatureDb.initializeTransaction(gnosisAddress, txHash, encodedTx, signatures[0]);
+    } catch (error) {
+      console.log({ error });
+    }
   };
 
   const createAndSign = async () => {
@@ -122,14 +165,35 @@ function App(props) {
     const toAddressChecksum = ethers.utils.getAddress(toAddress);
     console.log({ gnosisAddress, gnosisAddressChecksum, toAddress, toAddressChecksum });
     try {
-      const multisendContract = new ethers.Contract('0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761', MultisendABI, localProvider);
+      const multisendContract = new ethers.Contract(
+        "0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761",
+        MultisendABI,
+        localProvider,
+      );
+      // TODO fix address
+      const relayerContract = new ethers.Contract(
+        "0x6F1de1A2Fa149707c5D3323Fc4861B3bd2EbcC5E", // Rinkeby
+        TipRelayerABI,
+        localProvider,
+      );
       const gnosisSafe = new ethers.Contract(gnosisAddressChecksum, GnosisSafeABI, localProvider);
-      
-      const multisendAction = encodeMultiAction(multisendContract, txs)
-      
-      console.log({multisendAction})
 
-      const encoded = await gnosisSafe.callStatic.encodeTransactionData(
+      txs.push({
+        to: relayerContract.address,
+        data: "0x",
+        value: ethers.utils.parseEther(tipValue),
+        operation: 0,
+      });
+
+      const nonce = await gnosisSafe.nonce();
+
+      const multisendAction = encodeMultiAction(multisendContract, txs);
+
+      console.log({ nonce, multisendAction });
+
+      // todo abi encode the arguments into bytes for storage
+
+      const abiEncoded = encodeTransaction(
         multisendContract.address,
         0,
         multisendAction,
@@ -139,9 +203,11 @@ function App(props) {
         0,
         ZERO_ADDRESS,
         ZERO_ADDRESS,
-        1,
+        nonce,
+        txComment,
       );
-      setEncodedTx(encoded);
+
+      setEncodedTx(abiEncoded);
       const newTxHash = await gnosisSafe.callStatic.getTransactionHash(
         multisendContract.address,
         0,
@@ -152,10 +218,10 @@ function App(props) {
         0,
         ZERO_ADDRESS,
         ZERO_ADDRESS,
-        1,
+        nonce,
       );
-      setTxHash(txHash);
-      console.log({ encoded, newTxHash });
+      setTxHash(newTxHash);
+      console.log({ newTxHash, abiEncoded });
       const signed = await safeSignTypedData(userSigner, gnosisSafe, {
         to: multisendContract.address,
         value: 0,
@@ -166,10 +232,12 @@ function App(props) {
         gasPrice: 0,
         gasToken: ZERO_ADDRESS,
         refundReceiver: ZERO_ADDRESS,
-        nonce: 1,
+        nonce,
       });
-      setSignatures(signatures.push(signed));
-      console.log({ signed });
+      const newSigs = [...signatures];
+      newSigs.push(signed.data);
+      console.log({ newSigs });
+      setSignatures(newSigs);
     } catch (error) {
       console.log({ error });
     }
@@ -342,7 +410,11 @@ function App(props) {
   return (
     <div className="App">
       {/* ✏️ Edit the header and change the title to your project name */}
-      <Header>
+      <Header
+        title="🎩 Multisig Mempool"
+        link="https://github.com/wpapper/multisig-mempool/"
+        subTitle="Store pending multisig transactions on L2s"
+      >
         {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
         <div style={{ position: "relative", display: "flex", flexDirection: "column" }}>
           <div style={{ display: "flex", flex: 1 }}>
@@ -381,174 +453,77 @@ function App(props) {
         logoutOfWeb3Modal={logoutOfWeb3Modal}
         USE_NETWORK_SELECTOR={USE_NETWORK_SELECTOR}
       />
-      <Menu style={{ textAlign: "center", marginTop: 20 }} selectedKeys={[location.pathname]} mode="horizontal">
-        <Menu.Item key="/">
-          <Link to="/">App Home</Link>
-        </Menu.Item>
-        <Menu.Item key="/home">
-          <Link to="/home">Home</Link>
-        </Menu.Item>
-        <Menu.Item key="/debug">
-          <Link to="/debug">Debug Contracts</Link>
-        </Menu.Item>
-        <Menu.Item key="/hints">
-          <Link to="/hints">Hints</Link>
-        </Menu.Item>
-        <Menu.Item key="/exampleui">
-          <Link to="/exampleui">ExampleUI</Link>
-        </Menu.Item>
-        <Menu.Item key="/mainnetdai">
-          <Link to="/mainnetdai">Mainnet DAI</Link>
-        </Menu.Item>
-        <Menu.Item key="/subgraph">
-          <Link to="/subgraph">Subgraph</Link>
-        </Menu.Item>
-      </Menu>
 
-      <Switch>
-        <Route exact path="/">
-          {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
-          <div>
-            {/*
+      {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
+      <div>
+        {/*
         ⚙️ Here is an example UI that displays and sets the purpose in your smart contract:
       */}
-            <div style={{ border: "1px solid #cccccc", padding: 16, width: 400, margin: "auto", marginTop: 64 }}>
-              <h2>Tx Builder:</h2>
-              <Divider />
-              <div style={{ margin: 8 }}></div>
-              Gnosis Safe
-              <AddressInput onChange={setGnosisAddress} value={gnosisAddress}></AddressInput>
-              <Divider />
-              To
-              <AddressInput onChange={setToAddress} value={toAddress}></AddressInput>
-              Data
-              <Input onChange={e => setTxData(e.target.value)} value={txData}></Input>
-              Value
-              <EtherInput onChange={setTxValue} value={txValue} price={price}></EtherInput>
-              <Divider />
-              <Button
-                onClick={() => {
-                  /* look how we call setPurpose AND send some value along */
-                  addTx();
-                  /* this will fail until you make the setPurpose function payable */
-                }}
-              >
-                Add transaction
-              </Button>
-              <Divider />
-              Tip
-              <EtherInput onChange={setTipValue} value={tipValue} price={price}></EtherInput>
-              <Divider />
-              <Button
-                onClick={() => {
-                  /* look how we call setPurpose AND send some value along */
-                  createAndSign();
-                  /* this will fail until you make the setPurpose function payable */
-                }}
-              >
-                Sign transactions
-              </Button>
-              <Button
-                onClick={() => {
-                  /* look how we call setPurpose AND send some value along */
-                  createAndSign();
-                  /* this will fail until you make the setPurpose function payable */
-                }}
-              >
-                Save transactions
-              </Button>
-            </div>
-            <div style={{ width: 600, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
-              <h2>Txs:</h2>
-              <List
-                bordered
-                dataSource={txs}
-                renderItem={item => {
-                  return (
-                    <List.Item key={(Math.random() + 1).toString(36).substring(7)}>
-                      <Address address={item.to} ensProvider={mainnetProvider} fontSize={16} />
-                      {item.data.slice(0, 15)}...
-                    </List.Item>
-                  );
-                }}
-              />
-            </div>
-          </div>
-        </Route>
-        <Route exact path="/home">
-          {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
-          <Home yourLocalBalance={yourLocalBalance} readContracts={readContracts} />
-        </Route>
-        <Route exact path="/debug">
-          {/*
-                🎛 this scaffolding is full of commonly used components
-                this <Contract/> component will automatically parse your ABI
-                and give you a form to interact with it locally
-            */}
-
-          <Contract
-            name="YourContract"
-            price={price}
-            signer={userSigner}
-            provider={localProvider}
-            address={address}
-            blockExplorer={blockExplorer}
-            contractConfig={contractConfig}
+        <div style={{ border: "1px solid #cccccc", padding: 16, width: 400, margin: "auto", marginTop: 64 }}>
+          <h2>Tx Builder:</h2>
+          <Divider />
+          <div style={{ margin: 8 }}></div>
+          Gnosis Safe
+          <AddressInput onChange={setGnosisAddress} value={gnosisAddress}></AddressInput>
+          <Divider />
+          To
+          <AddressInput onChange={setToAddress} value={toAddress}></AddressInput>
+          Data
+          <Input onChange={e => setTxData(e.target.value)} value={txData}></Input>
+          Value
+          <EtherInput onChange={setTxValue} value={txValue} price={price}></EtherInput>
+          <Divider />
+          <Button
+            onClick={() => {
+              /* look how we call setPurpose AND send some value along */
+              addTx();
+              /* this will fail until you make the setPurpose function payable */
+            }}
+          >
+            Add transaction
+          </Button>
+          <Divider />
+          Tip
+          <EtherInput onChange={setTipValue} value={tipValue} price={price}></EtherInput>
+          <Divider />
+          Comments
+          <Input onChange={e => setTxComment(e.target.value)} value={txComment}></Input>
+          <Divider />
+          <Button
+            onClick={() => {
+              /* look how we call setPurpose AND send some value along */
+              createAndSign();
+              /* this will fail until you make the setPurpose function payable */
+            }}
+          >
+            Sign transactions
+          </Button>
+          <Button
+            onClick={() => {
+              /* look how we call setPurpose AND send some value along */
+              submitSignature();
+              /* this will fail until you make the setPurpose function payable */
+            }}
+          >
+            Save transactions
+          </Button>
+        </div>
+        <div style={{ width: 600, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
+          <h2>Txs:</h2>
+          <List
+            bordered
+            dataSource={txs}
+            renderItem={item => {
+              return (
+                <List.Item key={(Math.random() + 1).toString(36).substring(7)}>
+                  <Address address={item.to} ensProvider={mainnetProvider} fontSize={16} />
+                  {item.data.slice(0, 15)}...
+                </List.Item>
+              );
+            }}
           />
-        </Route>
-        <Route path="/hints">
-          <Hints
-            address={address}
-            yourLocalBalance={yourLocalBalance}
-            mainnetProvider={mainnetProvider}
-            price={price}
-          />
-        </Route>
-        <Route path="/exampleui">
-          <ExampleUI
-            address={address}
-            userSigner={userSigner}
-            mainnetProvider={mainnetProvider}
-            localProvider={localProvider}
-            yourLocalBalance={yourLocalBalance}
-            price={price}
-            tx={tx}
-            writeContracts={writeContracts}
-            readContracts={readContracts}
-            purpose={purpose}
-          />
-        </Route>
-        <Route path="/mainnetdai">
-          <Contract
-            name="DAI"
-            customContract={mainnetContracts && mainnetContracts.contracts && mainnetContracts.contracts.DAI}
-            signer={userSigner}
-            provider={mainnetProvider}
-            address={address}
-            blockExplorer="https://etherscan.io/"
-            contractConfig={contractConfig}
-            chainId={1}
-          />
-          {/*
-            <Contract
-              name="UNI"
-              customContract={mainnetContracts && mainnetContracts.contracts && mainnetContracts.contracts.UNI}
-              signer={userSigner}
-              provider={mainnetProvider}
-              address={address}
-              blockExplorer="https://etherscan.io/"
-            />
-            */}
-        </Route>
-        <Route path="/subgraph">
-          <Subgraph
-            subgraphUri={props.subgraphUri}
-            tx={tx}
-            writeContracts={writeContracts}
-            mainnetProvider={mainnetProvider}
-          />
-        </Route>
-      </Switch>
+        </div>
+      </div>
 
       <ThemeSwitch />
 

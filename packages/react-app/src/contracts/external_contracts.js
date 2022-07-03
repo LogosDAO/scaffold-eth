@@ -784,6 +784,94 @@ const DAIABI = [
   },
 ];
 
+const SignatureDbABI = [
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "gnosisSafe",
+        type: "address",
+      },
+      {
+        internalType: "bytes32",
+        name: "dataHash",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes",
+        name: "signatures",
+        type: "bytes",
+      },
+    ],
+    name: "addSignatures",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "gnosisSafe",
+        type: "address",
+      },
+      {
+        internalType: "bytes32",
+        name: "dataHash",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes",
+        name: "data",
+        type: "bytes",
+      },
+      {
+        internalType: "bytes",
+        name: "signatures",
+        type: "bytes",
+      },
+    ],
+    name: "checkSignaturesGnosis",
+    outputs: [],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "gnosisSafe",
+        type: "address",
+      },
+      {
+        internalType: "bytes32",
+        name: "dataHash",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes",
+        name: "data",
+        type: "bytes",
+      },
+      {
+        internalType: "bytes",
+        name: "signatures",
+        type: "bytes",
+      },
+    ],
+    name: "initializeTransaction",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "setSignatureReward",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+];
 
 // Mainnet DAI, Optimism and Arbitrium Rollup Contracts with local addresses
 module.exports = {
@@ -796,6 +884,14 @@ module.exports = {
       UNI: {
         address: "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",
         abi: ERC20ABI,
+      },
+    },
+  },
+  4: {
+    contracts: {
+      SignatureDb: {
+        address: "0x7737d07795b08e18c2561d91ca9b7296a3e378d5",
+        abi: SignatureDbABI,
       },
     },
   },
