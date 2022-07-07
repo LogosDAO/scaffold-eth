@@ -16,13 +16,20 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const tx = await deploy("TipRelayer", {
+  const tx = await deploy("SignatureDB", {
     from: deployer,
     args: [
     ],
     log: true,
     waitConfirmations: 5,
   });
+  // const tx = await deploy("TipRelayer", {
+  //   from: deployer,
+  //   args: [
+  //   ],
+  //   log: true,
+  //   waitConfirmations: 5,
+  // });
 
   console.log({ tx });
   /*  await YourContract.setPurpose("Hello");

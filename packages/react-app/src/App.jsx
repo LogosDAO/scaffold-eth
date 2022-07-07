@@ -103,6 +103,7 @@ function App(props) {
   const [txValue, setTxValue] = useState();
   const [signatures, setSignatures] = useState([]);
   const [encodedTx, setEncodedTx] = useState();
+  const [multisendAction, setMultisendAction] = useState();
   const [txHash, setTxHash] = useState();
   const [tipValue, setTipValue] = useState();
   const [selectedNetwork, setSelectedNetwork] = useState(networkOptions[0]);
@@ -154,7 +155,28 @@ function App(props) {
   const submitSignature = async () => {
     try {
       console.log({ gnosisAddress, txHash, encodedTx, signatures });
-      await writeContracts.SignatureDb.initializeTransaction(gnosisAddress, txHash, encodedTx, signatures[0]);
+      await writeContracts.SignatureDb.addSignatures(gnosisAddress, txHash, signatures[0]);
+    } catch (error) {
+      console.log({ error });
+    }
+  };
+
+  const execWithSignatures = async () => {
+    const gnosisSafe = new ethers.Contract(gnosisAddress, GnosisSafeABI, userSigner);
+
+    try {
+      await gnosisSafe.execTransaction(
+        "0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761",
+        0,
+        multisendAction,
+        1,
+        0,
+        0,
+        0,
+        ZERO_ADDRESS,
+        ZERO_ADDRESS,
+        signatures[0],
+      );
     } catch (error) {
       console.log({ error });
     }
@@ -172,7 +194,7 @@ function App(props) {
       );
       // TODO fix address
       const relayerContract = new ethers.Contract(
-        "0x6F1de1A2Fa149707c5D3323Fc4861B3bd2EbcC5E", // Rinkeby
+        "0xda945d66170849d6eef90df09cd1f235d83efa66", // Rinkeby
         TipRelayerABI,
         localProvider,
       );
@@ -208,6 +230,7 @@ function App(props) {
       );
 
       setEncodedTx(abiEncoded);
+      setMultisendAction(multisendAction);
       const newTxHash = await gnosisSafe.callStatic.getTransactionHash(
         multisendContract.address,
         0,
@@ -453,77 +476,152 @@ function App(props) {
         logoutOfWeb3Modal={logoutOfWeb3Modal}
         USE_NETWORK_SELECTOR={USE_NETWORK_SELECTOR}
       />
+      <Menu style={{ textAlign: "center", marginTop: 20 }} selectedKeys={[location.pathname]} mode="horizontal">
+        <Menu.Item key="/">
+          <Link to="/">Tx Builder</Link>
+        </Menu.Item>
+        <Menu.Item key="/sign">
+          <Link to="/sign">Sign</Link>
+        </Menu.Item>
+      </Menu>
 
-      {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
-      <div>
-        {/*
-        ⚙️ Here is an example UI that displays and sets the purpose in your smart contract:
-      */}
-        <div style={{ border: "1px solid #cccccc", padding: 16, width: 400, margin: "auto", marginTop: 64 }}>
-          <h2>Tx Builder:</h2>
-          <Divider />
-          <div style={{ margin: 8 }}></div>
-          Gnosis Safe
-          <AddressInput onChange={setGnosisAddress} value={gnosisAddress}></AddressInput>
-          <Divider />
-          To
-          <AddressInput onChange={setToAddress} value={toAddress}></AddressInput>
-          Data
-          <Input onChange={e => setTxData(e.target.value)} value={txData}></Input>
-          Value
-          <EtherInput onChange={setTxValue} value={txValue} price={price}></EtherInput>
-          <Divider />
-          <Button
-            onClick={() => {
-              /* look how we call setPurpose AND send some value along */
-              addTx();
-              /* this will fail until you make the setPurpose function payable */
-            }}
-          >
-            Add transaction
-          </Button>
-          <Divider />
-          Tip
-          <EtherInput onChange={setTipValue} value={tipValue} price={price}></EtherInput>
-          <Divider />
-          Comments
-          <Input onChange={e => setTxComment(e.target.value)} value={txComment}></Input>
-          <Divider />
-          <Button
-            onClick={() => {
-              /* look how we call setPurpose AND send some value along */
-              createAndSign();
-              /* this will fail until you make the setPurpose function payable */
-            }}
-          >
-            Sign transactions
-          </Button>
-          <Button
-            onClick={() => {
-              /* look how we call setPurpose AND send some value along */
-              submitSignature();
-              /* this will fail until you make the setPurpose function payable */
-            }}
-          >
-            Save transactions
-          </Button>
-        </div>
-        <div style={{ width: 600, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
-          <h2>Txs:</h2>
-          <List
-            bordered
-            dataSource={txs}
-            renderItem={item => {
-              return (
-                <List.Item key={(Math.random() + 1).toString(36).substring(7)}>
-                  <Address address={item.to} ensProvider={mainnetProvider} fontSize={16} />
-                  {item.data.slice(0, 15)}...
-                </List.Item>
-              );
-            }}
-          />
-        </div>
-      </div>
+      <Switch>
+        <Route exact path="/">
+          {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
+          <div>
+            <div style={{ border: "1px solid #cccccc", padding: 16, width: 400, margin: "auto", marginTop: 64 }}>
+              <h2>Tx Builder:</h2>
+              <Divider />
+              <div style={{ margin: 8 }}></div>
+              Gnosis Safe
+              <AddressInput onChange={setGnosisAddress} value={gnosisAddress}></AddressInput>
+              <Divider />
+              To
+              <AddressInput onChange={setToAddress} value={toAddress}></AddressInput>
+              Data
+              <Input onChange={e => setTxData(e.target.value)} value={txData}></Input>
+              Value
+              <EtherInput onChange={setTxValue} value={txValue} price={price}></EtherInput>
+              <Divider />
+              <Button
+                onClick={() => {
+                  /* look how we call setPurpose AND send some value along */
+                  addTx();
+                  /* this will fail until you make the setPurpose function payable */
+                }}
+              >
+                Add transaction
+              </Button>
+              <Divider />
+              Tip
+              <EtherInput onChange={setTipValue} value={tipValue} price={price}></EtherInput>
+              <Divider />
+              Comments
+              <Input onChange={e => setTxComment(e.target.value)} value={txComment}></Input>
+              <Divider />
+              <Button
+                onClick={() => {
+                  createAndSign();
+                }}
+              >
+                Sign transactions
+              </Button>
+              <Button
+                onClick={() => {
+                  /* look how we call setPurpose AND send some value along */
+                  submitSignature();
+                  /* this will fail until you make the setPurpose function payable */
+                }}
+              >
+                Save transactions
+              </Button>
+              <Button
+                onClick={() => {
+                  execWithSignatures();
+                }}
+              >
+                Exec transactions
+              </Button>
+            </div>
+            <div style={{ width: 600, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
+              <h2>Txs:</h2>
+              <List
+                bordered
+                dataSource={txs}
+                renderItem={item => {
+                  return (
+                    <List.Item key={(Math.random() + 1).toString(36).substring(7)}>
+                      <Address address={item.to} ensProvider={mainnetProvider} fontSize={16} />
+                      {item.data.slice(0, 15)}...
+                    </List.Item>
+                  );
+                }}
+              />
+            </div>
+          </div>
+        </Route>
+        <Route exact path="/sign">
+          {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
+          <div>
+            <div style={{ border: "1px solid #cccccc", padding: 16, width: 400, margin: "auto", marginTop: 64 }}>
+              <h2>Tx Signer:</h2>
+              <Divider />
+              <div style={{ margin: 8 }}></div>
+              Gnosis Safe
+              <AddressInput onChange={setGnosisAddress} value={gnosisAddress}></AddressInput>
+              TX Hash
+              <Input onChange={e => setTxHash(e.target.value)} value={txData}></Input>
+              <Divider />
+              <Button
+                onClick={() => {
+                  /* look how we call setPurpose AND send some value along */
+                  addTx();
+                  /* this will fail until you make the setPurpose function payable */
+                }}
+              >
+                Load transaction
+              </Button>
+              <Divider />
+              Comments
+              <Input onChange={e => setTxComment(e.target.value)} value={txComment}></Input>
+              <Divider />
+              <Button
+                onClick={() => {
+                  /* look how we call setPurpose AND send some value along */
+                  createAndSign();
+                  /* this will fail until you make the setPurpose function payable */
+                }}
+              >
+                Sign transactions
+              </Button>
+              <Button
+                onClick={() => {
+                  /* look how we call setPurpose AND send some value along */
+                  submitSignature();
+                  /* this will fail until you make the setPurpose function payable */
+                }}
+              >
+                Save transactions
+              </Button>
+            </div>
+            <div style={{ width: 600, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
+              <h2>Txs:</h2>
+              <List
+                bordered
+                dataSource={txs}
+                renderItem={item => {
+                  return (
+                    <List.Item key={(Math.random() + 1).toString(36).substring(7)}>
+                      <Address address={item.to} ensProvider={mainnetProvider} fontSize={16} />
+                      {item.data.slice(0, 15)}...
+                    </List.Item>
+                  );
+                }}
+              />
+            </div>
+          </div>
+        </Route>
+      </Switch>
 
       <ThemeSwitch />
 
